@@ -1,3 +1,5 @@
+import net.fabricmc.loom.task.RemapJarTask
+
 plugins {
     kotlin("jvm")
     id("fabric-loom")
@@ -8,21 +10,47 @@ plugins {
 group = property("maven_group")!!
 version = property("mod_version")!!
 
+
+val mcVersion = property("minecraft_version")!!
+val mcPlatform = property("minecraft_platform")!!
+val buildNumber = property("build_number")!!
+
+
 repositories {
-    // Add repositories to retrieve artifacts from in here.
-    // You should only use this when depending on other mods because
-    // Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
-    // See https://docs.gradle.org/current/userguide/declaring_repositories.html
-    // for more information about repositories.
+    maven(url = "https://repo.essential.gg/repository/maven-public")
+    maven(url = "https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1")
+
+    maven(url = "https://oss.jfrog.org/simple/libs-snapshot")
+}
+
+val shade by configurations.creating
+configurations.modImplementation.get().extendsFrom(shade)
+
+configurations.modImplementation {
+    exclude("gg.essential", "universalcraft-1.18.1")
+    exclude("gg.essential", "universalcraft-*")
+}
+
+loom {
+
 }
 
 dependencies {
-    minecraft("com.mojang:minecraft:${property("minecraft_version")}")
+    minecraft("com.mojang:minecraft:${mcVersion}")
     mappings("net.fabricmc:yarn:${property("yarn_mappings")}:v2")
-    modImplementation("net.fabricmc:fabric-loader:${property("loader_version")}")
+    modImplementation(include("net.fabricmc:fabric-loader:${property("loader_version")}")!!)
+    modImplementation(include("net.fabricmc:fabric-language-kotlin:${property("fabric_kotlin_version")}")!!)
+    modImplementation(include("net.fabricmc.fabric-api:fabric-api:${property("fabric_api_version")}")!!)
 
-    modImplementation("net.fabricmc:fabric-language-kotlin:${property("fabric_kotlin_version")}")
-    modImplementation("net.fabricmc.fabric-api:fabric-api:${property("fabric_api_version")}")
+    modRuntimeOnly("me.djtheredstoner:DevAuth-fabric:1.1.0")
+
+    implementation("be.bluexin:drpc4k:0.9")
+    // org.jetbrains.kotlinx:kotlinx-coroutines-core
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
+
+    // vigilance
+    modImplementation(include("gg.essential:vigilance-1.18.1-fabric:280")!!)
+    modImplementation(include("gg.essential:universalcraft-1.19.2-fabric:254")!!)
 }
 
 tasks {
@@ -36,6 +64,7 @@ tasks {
 
     jar {
         from("LICENSE")
+      //  destinationDirectory.set(file("C:\\Users\\Maik\\AppData\\Roaming\\PrismLauncher\\instances\\Avalon 4\\.minecraft\\mods"))
     }
 
     publishing {
@@ -50,10 +79,7 @@ tasks {
             }
         }
 
-        // select the repositories you want to publish to
         repositories {
-            // uncomment to publish to the local maven
-            // mavenLocal()
         }
     }
 
@@ -64,12 +90,5 @@ tasks {
 }
 
 java {
-    // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
-    // if it is present.
-    // If you remove this line, sources will not be generated.
     withSourcesJar()
 }
-
-
-
-// configure the maven publication

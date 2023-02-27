@@ -1,4 +1,4 @@
-rootProject.name = "fabric-example-mod-kotlin-with-kotlin-dsl"
+rootProject.name = "AvalonAddons"
 pluginManagement {
     repositories {
         maven("https://maven.fabricmc.net/") {
@@ -6,6 +6,9 @@ pluginManagement {
         }
         mavenCentral()
         gradlePluginPortal()
+
+        // shadow jar
+        maven("https://plugins.gradle.org/m2/")
     }
 
     val loom_version: String by settings
@@ -14,7 +17,7 @@ pluginManagement {
         id("fabric-loom") version loom_version
         id("org.jetbrains.kotlin.jvm") version
                 fabric_kotlin_version
-                    .split("+kotlin.")[1] // Grabs the sentence after `+kotlin.`
-                    .split("+")[0] // Ensures sentences like `+build.1` are ignored
+                    .split("+kotlin.")[1]
+                    .split("+")[0]
     }
 }

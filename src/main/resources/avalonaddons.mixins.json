@@ -1,0 +1,17 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "de.bybackfish.avalonaddons.mixins",
+  "compatibilityLevel": "JAVA_17",
+  "client": [
+    "MixinChatScreen",
+    "MixinClientConnection",
+    "MixinCompassAngle",
+    "MixinOptionsHud",
+    "MixinPlayerListHud",
+    "render.RenderItem"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
