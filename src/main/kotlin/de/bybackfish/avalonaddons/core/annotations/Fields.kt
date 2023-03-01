@@ -22,6 +22,7 @@ enum class OverlayStage {
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class Button(
+    val sortingOrder: Int = 0,
     val description: String = "",
     val searchTags: Array<String> = [],
     val hidden: Boolean = false,

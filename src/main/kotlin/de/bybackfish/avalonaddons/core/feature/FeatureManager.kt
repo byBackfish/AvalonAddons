@@ -27,9 +27,9 @@ class FeatureManager {
     val features = mutableMapOf<KClass<out Feature>, Feature>()
 
     init {
-        ClientTickEvents.END_CLIENT_TICK.register(ClientTickEvents.EndTick { client: MinecraftClient ->
-            // check all keybinds
-            features.forEach { (clazz, feature) ->
+        ClientTickEvents.END_CLIENT_TICK.register(ClientTickEvents.EndTick { _: MinecraftClient ->
+            features.forEach { (_, feature) ->
+                if (feature.state != FeatureState.ENABLED) return@forEach
                 feature.featureInfo.keybindings.forEach { keybindSetting ->
                     if (keybindSetting.keybinding.isPressed) {
                         keybindSetting.function.call(feature)
@@ -113,19 +113,19 @@ class FeatureManager {
         println("[Avalon] Loading Settings to Config")
         val config = AvalonAddons.config
         features.forEach { (clazz, feature) ->
-            println("[Avalon] Loading Feature ${feature::class.simpleName} with properties: ${feature.featureInfo.properties.size}")
+            println("[Avalon] Loading Feature ${clazz.simpleName} with properties: ${feature.featureInfo.properties.size}")
             val featureData = nativeRegisterProperty<Nothing>(
                 value = FeatureTogglePropertyValue(feature),
                 type = PropertyType.SWITCH,
                 name = "Toggle",
-                description = "Enable ${getTranslatedName(getKey(feature::class))}",
+                description = "Enable ${getTranslatedName(getKey(clazz))}",
                 category = feature.featureInfo.category,
-                subcategory = getTranslatedName(getKey(feature::class)),
+                subcategory = getTranslatedName(getKey(clazz)),
                 config = config,
             )
 
             feature.featureInfo.properties.forEach { propertySetting ->
-                val subData = nativeRegisterFeaturePropertySetting(
+                nativeRegisterFeaturePropertySetting(
                     config,
                     feature,
                     propertySetting,
@@ -143,24 +143,6 @@ class FeatureManager {
             }
         }
 
-    }
-
-    private fun test(
-        feature: Feature,
-        config: AvalonConfig,
-        builder: Vigilant.CategoryPropertyBuilder
-    ) {
-        val data = PropertyData(
-            PropertyAttributesExt(
-                type = PropertyType.SWITCH,
-                name = "Test Switch",
-                category = "Test",
-            ),
-            FeatureTogglePropertyValue(feature),
-            config
-        )
-
-        config.registerProperty(data)
     }
 
     private fun <T> nativeRegisterProperty(
@@ -273,7 +255,7 @@ class FeatureManager {
             name = getTranslatedName(getKey(buttonSetting.feature::class, buttonSetting.function)),
             description = buttonSetting.annotation.description,
             searchTags = buttonSetting.annotation.searchTags.toList(),
-
+            sortingOrder = buttonSetting.annotation.sortingOrder,
             category = buttonSetting.feature.featureInfo.category,
             subcategory = getTranslatedName(getKey(feature::class)),
 

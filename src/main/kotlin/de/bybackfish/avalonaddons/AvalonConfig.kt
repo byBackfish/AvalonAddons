@@ -1,8 +1,11 @@
 package de.bybackfish.avalonaddons
 
+import gg.essential.universal.UChat
 import gg.essential.vigilance.Vigilant
 import gg.essential.vigilance.data.*
+import net.minecraft.client.MinecraftClient
 import net.minecraft.util.Rarity
+import java.awt.Desktop
 import java.io.File
 
 class AvalonConfig : Vigilant(
@@ -14,7 +17,7 @@ class AvalonConfig : Vigilant(
 
     @Property(
         type = PropertyType.CHECKBOX,
-        name = "AvalonAddons v0.2.1b",
+        name = "AvalonAddons v0.1.2b",
         description = "Coming soonTM\n\nMade by byBackfish#5701",
         category = "General"
     )
@@ -38,7 +41,8 @@ class AvalonConfig : Vigilant(
         placeholder = "Join Discord"
     )
     fun joinDiscord() {
-
+        val link = "https://discord.gg/2Nyjb36xt6"
+        browse(link)
     }
 
     @Property(
@@ -50,9 +54,18 @@ class AvalonConfig : Vigilant(
         placeholder = "Join Discord"
     )
     fun joinADiscord() {
-
+        val link = "https://discord.gg/rdwBGTAKq7"
+        browse(link)
     }
 
+    private fun browse(link: String) {
+        kotlin.runCatching {
+            Desktop.getDesktop().browse(java.net.URI(link));
+        }.onFailure {
+            MinecraftClient.getInstance().setScreen(null)
+            UChat.chat("§a§lInvite Link§r§7: §r$link")
+        }
+    }
 
     // Boss Cooldowns for each of the Bosses of Bosses.kt
     @Property(
@@ -164,8 +177,8 @@ class AvalonConfig : Vigilant(
             val o2Name = o2.attributesExt.name
 
 
-            val sortingOrder = o1.attributesExt.maxF ?: 0f
-            val sortingOrder2 = o2.attributesExt.maxF ?: 0f
+            val sortingOrder = o1.attributesExt.maxF
+            val sortingOrder2 = o2.attributesExt.maxF
 
             if (sortingOrder != 0f && sortingOrder2 != 0f) {
                 return sortingOrder.compareTo(sortingOrder2)

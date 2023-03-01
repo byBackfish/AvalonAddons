@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "avalonaddons",
-  "version": "${version}",
+  "version": "pre-0.1.2",
   "name": "Avalon Addons",
   "description": "This is a quality of life mod for Avalon.",
   "authors": [

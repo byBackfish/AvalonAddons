@@ -3,30 +3,29 @@ package de.bybackfish.avalonaddons.avalon
 import de.bybackfish.avalonaddons.AvalonAddons
 import gg.essential.universal.ChatColor
 
-enum class Bosses(val textString: String) {
-    SKELETON_KING("The Skeleton King"),
-    WITHER_QUEEN("The Wither Queen"),
-    VARSON("Lord Varson"),
-    LORD_REVAN("Lord Revan"),
-    MEDIVH("Medivh"),
-    CORRUPTED_KING_XERO("Corrupted King Xero"),
-    ARKSHIFT("Arkshift"),
+enum class Bosses(val textString: String, val displayName: String? = textString) {
+    SKELETON_KING("The Skeleton King", "§6The Skeleton King"),
+    WITHER_QUEEN("The Wither Queen", "§dThe Wither Queen"),
+    VARSON("Lord Varson", "§cLord Varson"),
+    LORD_REVAN("Lord Revan", "§aLord Revan"),
+    MEDIVH("Medivh", "§5Medivh"),
+    CORRUPTED_KING_XERO("Corrupted King Xero", "§6Corrupted King Xero"),
+    ARKSHIFT("Arkshift", "§4Arkshift"),
 
-    MEGA_REVAN("Mega Lord Revan"),
-    ULTRA_VARSON("Ultra Varson"),
-    CELOSIA("â€ Celosia, Stolen Throne â€"),
+    MEGA_REVAN("Mega Lord Revan", "§aMega Lord Revan"),
+    ULTRA_VARSON("Ultra Varson", "§cUltra Varson"),
+    CELOSIA("❀ Celosia, Stolen Throne ❀", "§e❀ §5§lCe§d§llosia, §2St§aolen §2Th§arone §e❀"),
     EVELYNN("Evelynn");
 
 
     companion object {
-        val COOLDOWN = 18 * 60 * 60 * 1000
-
+        const val COOLDOWN = 18 * 60 * 60 * 1000
         fun parseFromMessage(message: String): BossResult? {
             val regex = Regex("(.+) has been defeated by (.+)!.?")
 
             val match = regex.find(ChatColor.stripColorCodes(message)!!) ?: return null
-            val bossName = match.groups.get(1)?.value ?: return null
-            val playerName = match.groups.get(2)?.value ?: return null
+            val bossName = match.groups[1]?.value ?: return null
+            val playerName = match.groups[2]?.value ?: return null
 
             println("Boss: $bossName was killed by $playerName")
 
@@ -37,6 +36,7 @@ enum class Bosses(val textString: String) {
         }
 
         data class BossResult(val boss: Bosses, val player: String)
+
     }
 
     fun setLastKill(time: Long) {
@@ -75,6 +75,10 @@ enum class Bosses(val textString: String) {
 
     fun isCooldownOver(): Boolean {
         return getLastKillTime() + COOLDOWN < System.currentTimeMillis()
+    }
+
+    fun getReadyTime(): Long {
+        return getLastKillTime() + COOLDOWN
     }
 
 }

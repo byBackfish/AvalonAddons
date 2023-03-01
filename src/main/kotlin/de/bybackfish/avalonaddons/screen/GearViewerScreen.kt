@@ -14,11 +14,11 @@ import kotlin.math.roundToInt
 
 class GearViewerScreen(val player: PlayerEntity) : Screen(Text.of("Yes Screen")) {
 
-    lateinit var armorItems: List<ItemStack>
-    lateinit var mainHandItem: ItemStack
-    lateinit var offHandItem: ItemStack
+    var armorItems: List<ItemStack>
+    var mainHandItem: ItemStack
+    var offHandItem: ItemStack
 
-    lateinit var allItems: List<ItemStack>
+    var allItems: List<ItemStack>
 
     val armorTypes = arrayOf("Helmet", "Chestplate", "Leggings", "Boots")
 
@@ -31,7 +31,6 @@ class GearViewerScreen(val player: PlayerEntity) : Screen(Text.of("Yes Screen"))
     }
 
     override fun render(matrices: MatrixStack?, mouseX: Int, mouseY: Int, delta: Float) {
-        // add a dark blur background to the screen
         DrawableHelper.fill(matrices, 0, 0, width, height, 0x80000000.toInt())
 
 
@@ -43,8 +42,6 @@ class GearViewerScreen(val player: PlayerEntity) : Screen(Text.of("Yes Screen"))
         var startX = width / 2;
         val startY = 300;
 
-        // draw players name
-        // increase the font size
         MinecraftClient.getInstance().textRenderer.drawWithShadow(
             matrices,
             player.displayName.string + "'s Gear",
@@ -114,7 +111,7 @@ class GearViewerScreen(val player: PlayerEntity) : Screen(Text.of("Yes Screen"))
         itemRenderer: ItemRenderer,
         typeXOffset: Int = -50
     ) {
-        DrawableHelper.fill(matrices, x - -4, y - 4, x + 20, y + 20, 0x7F000000)
+        DrawableHelper.fill(matrices, x - 4, y - 4, x + 20, y + 20, 0x7F000000)
         MinecraftClient.getInstance().textRenderer.draw(
             matrices,
             type,
@@ -131,7 +128,7 @@ class GearViewerScreen(val player: PlayerEntity) : Screen(Text.of("Yes Screen"))
             y,
             null
         )
-        // on hover
+
         if (mouseX > x && mouseX < x + 16 && mouseY > y && mouseY < y + 16) {
             renderTooltip(matrices, item, mouseX, mouseY)
         }

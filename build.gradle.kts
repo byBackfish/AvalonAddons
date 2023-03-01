@@ -1,5 +1,3 @@
-import net.fabricmc.loom.task.RemapJarTask
-
 plugins {
     kotlin("jvm")
     id("fabric-loom")
@@ -35,20 +33,22 @@ loom {
 
 }
 
+
+
 dependencies {
     minecraft("com.mojang:minecraft:${mcVersion}")
     mappings("net.fabricmc:yarn:${property("yarn_mappings")}:v2")
-    modImplementation(include("net.fabricmc:fabric-loader:${property("loader_version")}")!!)
-    modImplementation(include("net.fabricmc:fabric-language-kotlin:${property("fabric_kotlin_version")}")!!)
-    modImplementation(include("net.fabricmc.fabric-api:fabric-api:${property("fabric_api_version")}")!!)
+    modImplementation("net.fabricmc:fabric-loader:${property("loader_version")}")
+    modImplementation("net.fabricmc.fabric-api:fabric-api:${property("fabric_api_version")}")
+
+
+    modImplementation("net.fabricmc:fabric-language-kotlin:${property("fabric_kotlin_version")}")
 
     modRuntimeOnly("me.djtheredstoner:DevAuth-fabric:1.1.0")
 
-    implementation("be.bluexin:drpc4k:0.9")
-    // org.jetbrains.kotlinx:kotlinx-coroutines-core
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
 
-    // vigilance
+    modImplementation(include("gg.essential:elementa-1.18.1-fabric:576+pull-104")!!)
     modImplementation(include("gg.essential:vigilance-1.18.1-fabric:280")!!)
     modImplementation(include("gg.essential:universalcraft-1.19.2-fabric:254")!!)
 }
@@ -86,6 +86,9 @@ tasks {
     compileKotlin {
         kotlinOptions.jvmTarget = "17"
     }
+
+    // replace every occurance of @VERSION@ in any file (except this one) with the version
+
 
 }
 

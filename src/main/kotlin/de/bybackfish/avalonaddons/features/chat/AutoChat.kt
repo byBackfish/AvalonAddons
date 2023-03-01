@@ -10,6 +10,10 @@ import de.bybackfish.avalonaddons.events.ClientChatEvent
 import gg.essential.universal.ChatColor
 import gg.essential.universal.UChat
 import gg.essential.vigilance.data.PropertyType
+import kotlinx.coroutines.delay
+import java.time.Duration
+import java.util.Timer
+import kotlin.concurrent.schedule
 
 @EnabledByDefault
 @Category("Chat")
@@ -25,9 +29,9 @@ class AutoChat : Feature() {
 
     @Property(
         sortingOrder = 2,
-        description = "Custom Welcome Back Message"
+        description = "Custom Welcome Back Message\nReplaces %s with the player name"
     )
-    var customWelcomeBackMessage = "wb"
+    var customWelcomeBackMessage = "wb %s"
 
     @Property(
         sortingOrder = 3,
@@ -38,21 +42,23 @@ class AutoChat : Feature() {
 
     @Property(
         sortingOrder = 4,
-        description = "Custom Good Luck Message"
+        description = "Custom Good Luck Message\nUse %s to replace it with the boss name"
     )
-    var customGoodLuckMessage = "gg gl"
+    var customGoodLuckMessage = "gg gl on %s"
 
     @Property(
         sortingOrder = 5,
         forceType = PropertyType.SWITCH,
-        description = "Automatically say 'welcome' to new players"
+        description = "Automatically say 'welcome' to new players",
+        hidden = true
     )
     var automaticallySayWelcome = false
 
     @Property
         (
         description = "Custom Welcome Message",
-        sortingOrder = 6
+        sortingOrder = 6,
+        hidden = true
     )
     var customWelcomeMessage = "Welcome!"
 
@@ -66,14 +72,23 @@ class AutoChat : Feature() {
             val playerName = match.groups.get(1) ?: return
 
             if (playerName.value == mc.player?.name?.string) return
-            UChat.say(customWelcomeBackMessage)
+
+
+            // run something async and wait 5 seconds
+            // use ExecutingThread to run something on the main thread
+            Timer().schedule((Math.random() * 3000 + 500).toLong()) {
+                UChat.say(customWelcomeBackMessage.replace("%s", playerName.value))
+            }
+
         }
     }
 
     @Subscribe
     fun onBossDeath(event: BossDefeatedEvent) {
         if (automaticallySayGoodLuck) {
-            UChat.say(customGoodLuckMessage)
+            Timer().schedule((Math.random() * 3000 + 500).toLong()) {
+                UChat.say(customGoodLuckMessage.replace("%s", event.boss.name))
+            }
         }
     }
 
