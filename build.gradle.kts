@@ -6,12 +6,14 @@ plugins {
 }
 
 group = property("maven_group")!!
-version = property("mod_version")!!
 
 
 val mcVersion = property("minecraft_version")!!
 val mcPlatform = property("minecraft_platform")!!
 val buildNumber = property("build_number")!!
+
+val versionFile = file("src/main/kotlin/VERSION.kt")
+version = versionFile.readText().split("\"")[1]
 
 
 repositories {
@@ -64,7 +66,7 @@ tasks {
 
     jar {
         from("LICENSE")
-      //  destinationDirectory.set(file("C:\\Users\\Maik\\AppData\\Roaming\\PrismLauncher\\instances\\Avalon 4\\.minecraft\\mods"))
+        //  destinationDirectory.set(file("C:\\Users\\Maik\\AppData\\Roaming\\PrismLauncher\\instances\\Avalon 4\\.minecraft\\mods"))
     }
 
     publishing {
@@ -95,3 +97,4 @@ tasks {
 java {
     withSourcesJar()
 }
+

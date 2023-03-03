@@ -1,6 +1,7 @@
 package de.bybackfish.avalonaddons
 
 import com.mojang.brigadier.arguments.StringArgumentType
+import de.bybackfish.avalonaddons.avalon.test
 import de.bybackfish.avalonaddons.core.event.EventBus
 import de.bybackfish.avalonaddons.core.feature.FeatureManager
 import de.bybackfish.avalonaddons.core.loadTranslations
@@ -51,6 +52,9 @@ class AvalonAddons : ModInitializer {
         bus.register(this)
 
         loadTranslations()
+
+        test()
+
 
         // chat event
 

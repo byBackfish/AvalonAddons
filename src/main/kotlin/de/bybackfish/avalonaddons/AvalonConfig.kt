@@ -1,5 +1,6 @@
 package de.bybackfish.avalonaddons
 
+import VERSION
 import gg.essential.universal.UChat
 import gg.essential.vigilance.Vigilant
 import gg.essential.vigilance.data.*
@@ -17,7 +18,7 @@ class AvalonConfig : Vigilant(
 
     @Property(
         type = PropertyType.CHECKBOX,
-        name = "AvalonAddons v0.1.2b",
+        name = "AvalonAddons $VERSION",
         description = "Coming soonTM\n\nMade by byBackfish#5701",
         category = "General"
     )

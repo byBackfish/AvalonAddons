@@ -84,6 +84,13 @@ class RarityBackgroundFeature : Feature() {
     @Property(
         forceType = PropertyType.COLOR,
         sortingOrder = 9,
+        description = "Color of the background for mythic items"
+    )
+    var mythicColor = Color(255, 128, 0, 255)
+
+    @Property(
+        forceType = PropertyType.COLOR,
+        sortingOrder = 10,
         description = "Color of the background for relic items"
     )
     // aqua/cyan
@@ -91,18 +98,25 @@ class RarityBackgroundFeature : Feature() {
 
     @Property(
         forceType = PropertyType.COLOR,
-        sortingOrder = 10,
+        sortingOrder = 11,
         description = "Color of the background for elder items"
     )
     var elderColor = Color(255, 0, 0, 255)
 
     @Property(
         forceType = PropertyType.COLOR,
-        sortingOrder = 11,
+        sortingOrder = 12,
         description = "Color of the background for ancient items"
     )
     // gray
     var ancientColor = Color(128, 128, 128, 255)
+
+    @Property(
+        forceType = PropertyType.COLOR,
+        sortingOrder = 13,
+        description = "Color of the background for spooky items"
+    )
+    var spookyColor = Color(225, 100, 0, 255)
 
     @Subscribe
     fun onEvent(event: ItemRenderGUIEvent) {
@@ -139,9 +153,11 @@ class RarityBackgroundFeature : Feature() {
             ItemRarity.EPIC -> epicColor
             ItemRarity.EXOTIC -> exoticColor
             ItemRarity.LEGENDARY -> legendaryColor
+            ItemRarity.MYTHIC -> mythicColor
             ItemRarity.RELIC -> relicColor
             ItemRarity.ELDER -> elderColor
             ItemRarity.ANCIENT -> ancientColor
+            ItemRarity.SPOOKY -> spookyColor
             else -> null
         }
     }

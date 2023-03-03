@@ -85,7 +85,7 @@ class BetterBossTimer : Feature() {
 
     @Property(
         forceType = PropertyType.SWITCH,
-        description = "Should the cooldown of Ultra Varsaon be rendered on screen?",
+        description = "Should the cooldown of Ultra Varson be rendered on screen?",
         sortingOrder = 10
     )
     var renderUltraVarson = false
@@ -173,7 +173,7 @@ class BetterBossTimer : Feature() {
             Regex("\\[Avalon] Teleporting you in 5 seconds\\.\\.\\.", RegexOption.MULTILINE),
             bossTeleportTimeoutDuration
         ),
-        Pair(Regex("You gained (\\d+) class exp!", RegexOption.MULTILINE), bossLootTimeoutDuration)
+        //     Pair(Regex("You gained (\\d+) class exp!", RegexOption.MULTILINE), bossLootTimeoutDuration)
     )
 
     @Subscribe

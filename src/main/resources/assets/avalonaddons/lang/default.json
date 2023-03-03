@@ -9,7 +9,7 @@
   "features.bosses.BetterBossTimer.renderCorruptedKingXero": "Corrupted King Xero Cooldown",
   "features.bosses.BetterBossTimer.renderArkshift": "Arkshift Cooldown",
   "features.bosses.BetterBossTimer.renderMegaRevan": "Mega Lord Revan Cooldown",
-  "features.bosses.BetterBossTimer.renderUltraVarson": "Ultra Varsaon Cooldown",
+  "features.bosses.BetterBossTimer.renderUltraVarson": "Ultra Varson Cooldown",
   "features.bosses.BetterBossTimer.renderCelosia": "Celosia Cooldown",
   "features.bosses.BetterBossTimer.renderEvelynn": "Evelynn Cooldown",
   "features.bosses.BetterBossTimer.resetTimers": "Reset Timers",
@@ -47,6 +47,5 @@
   "features.chat.AutoChat.customWelcomeBackMessage": "Custom Welcome Back Message",
 
   "features.chat.AutoChat.automaticallySayGoodLuck": "Automatic Good Luck",
-  "features.chat.AutoChat.customGoodLuckMessage": "Custom Good Luck Message",
-
+  "features.chat.AutoChat.customGoodLuckMessage": "Custom Good Luck Message"
 }

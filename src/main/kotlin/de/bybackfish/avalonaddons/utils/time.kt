@@ -29,3 +29,25 @@ fun formatRelativeFutureTime(then: Date): String {
         else -> "in ${seconds}s"
     }
 }
+
+fun hours(hours: Number): Long {
+    return minutes(hours * 60)
+}
+
+
+fun minutes(minutes: Number): Long {
+    return seconds(minutes * 60)
+}
+
+fun seconds(seconds: Number): Long {
+    return ms(seconds * 1000)
+}
+
+fun ms(milliseconds: Number): Long {
+    return milliseconds.toLong()
+}
+
+
+private operator fun Number.times(i: Int): Number {
+    return this.toLong() * i
+}

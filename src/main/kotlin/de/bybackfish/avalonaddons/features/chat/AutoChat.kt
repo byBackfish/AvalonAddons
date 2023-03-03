@@ -87,7 +87,7 @@ class AutoChat : Feature() {
     fun onBossDeath(event: BossDefeatedEvent) {
         if (automaticallySayGoodLuck) {
             Timer().schedule((Math.random() * 3000 + 500).toLong()) {
-                UChat.say(customGoodLuckMessage.replace("%s", event.boss.name))
+                UChat.say(customGoodLuckMessage.replace("%s", event.boss.textString))
             }
         }
     }

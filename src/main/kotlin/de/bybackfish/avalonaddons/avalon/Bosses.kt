@@ -4,18 +4,18 @@ import de.bybackfish.avalonaddons.AvalonAddons
 import gg.essential.universal.ChatColor
 
 enum class Bosses(val textString: String, val displayName: String? = textString) {
-    SKELETON_KING("The Skeleton King", "§6The Skeleton King"),
-    WITHER_QUEEN("The Wither Queen", "§dThe Wither Queen"),
-    VARSON("Lord Varson", "§cLord Varson"),
-    LORD_REVAN("Lord Revan", "§aLord Revan"),
-    MEDIVH("Medivh", "§5Medivh"),
-    CORRUPTED_KING_XERO("Corrupted King Xero", "§6Corrupted King Xero"),
-    ARKSHIFT("Arkshift", "§4Arkshift"),
+    SKELETON_KING("The Skeleton King", "§6§LThe Skeleton King"),
+    WITHER_QUEEN("The Wither Queen", "§d§lThe Wither Queen"),
+    VARSON("Lord Varson", "§c§lLord Varson"),
+    LORD_REVAN("Lord Revan", "§a§lLord Revan"),
+    MEDIVH("Medivh", "§5§lMedivh"),
+    CORRUPTED_KING_XERO("Corrupted King Xero", "§6§lCorrupted King Xero"),
+    ARKSHIFT("Arkshift", "§4§lArkshift"),
 
-    MEGA_REVAN("Mega Lord Revan", "§aMega Lord Revan"),
-    ULTRA_VARSON("Ultra Varson", "§cUltra Varson"),
+    MEGA_REVAN("Mega Lord Revan", "§a§lMega Lord Revan"),
+    ULTRA_VARSON("Ultra Varson", "§c§lUltra Varson"),
     CELOSIA("❀ Celosia, Stolen Throne ❀", "§e❀ §5§lCe§d§llosia, §2St§aolen §2Th§arone §e❀"),
-    EVELYNN("Evelynn");
+    EVELYNN("Evelynn", "§4§lEve§5§ll§d§lynn");
 
 
     companion object {

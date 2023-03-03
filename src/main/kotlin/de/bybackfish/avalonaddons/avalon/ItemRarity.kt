@@ -16,9 +16,12 @@ enum class ItemRarity {
     EPIC,
     EXOTIC,
     LEGENDARY,
+    MYTHIC,
     RELIC,
     ELDER,
-    ANCIENT;
+    ANCIENT,
+
+    SPOOKY;
 
 
     companion object {
