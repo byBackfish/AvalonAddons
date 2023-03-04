@@ -1,50 +1,68 @@
 package de.bybackfish.avalonaddons.avalon
 
+import de.bybackfish.avalonaddons.extensions.camel
 import de.bybackfish.avalonaddons.extensions.raw
+import de.bybackfish.avalonaddons.features.bosses.BetterBossTimer
 import de.bybackfish.avalonaddons.utils.hours
 import de.bybackfish.avalonaddons.utils.minutes
+import gg.essential.universal.ChatColor
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents
 import net.minecraft.client.gui.screen.ingame.GenericContainerScreen
 
-enum class Lootable(val containerName: String, val displayName: String, val cooldown: Long) {
+enum class Lootable(val containerName: List<String>, val displayName: String, val cooldown: Long) {
 
-    SKELETON_KING("Skeleton King Loot", "§6§LThe Skeleton King", hours(18)), //y
-    WITHER_QUEEN("Wither Queen's Loot", "§d§lThe Wither Queen", hours(18)), //y
-    VARSON("Lord Varson's Loot", "§c§lLord Varson", hours(18)),
-    LORD_REVAN("Lord Revan's Loot", "§a§lLord Revan", hours(18)),
-    MEDIVH("Medivh's Loot", "§5§lMedivh", hours(18)),
-    CORRUPTED_KING_XERO("Corrupted King Xero", "§6§lCorrupted King Xero", hours(18)),
-    ARKSHIFT("Arkshift Loot", "§4§lArkshift", hours(18)), //y
+    SKELETON_KING(listOf("Skeleton King Loot"), "§6§LThe Skeleton King", hours(18)), //y
+    WITHER_QUEEN(listOf("Wither Queen's Loot"), "§d§lThe Wither Queen", hours(18)), //y
+    VARSON(listOf("Varson Loot"), "§c§lLord Varson", hours(18)),
+    LORD_REVAN(listOf("Revan Loot", "Revan's Loot Chest"), "§a§lLord Revan", hours(18)), //y
+    MEDIVH(listOf("Medivh Loot"), "§5§lMedivh", hours(18)),
+    CORRUPTED_KING_XERO(listOf("King Xero's Chest"), "§6§lCorrupted King Xero", hours(18)),
+    ARKSHIFT(listOf("Arkshift Loot"), "§4§lArkshift", hours(18)), //y
 
-    MEGA_REVAN("Mega Lord Revan", "§a§lMega Lord Revan", hours(18)),
-    ULTRA_VARSON("Ultra Varson", "§c§lUltra Varson", hours(18)),
-    CELOSIA("❀ Celosia, Stolen Throne ❀", "§e❀ §5§lCe§d§llosia, §2St§aolen §2Th§arone §e❀", hours(18)),
-    EVELYNN("Evelynn", "§4§lEve§5§ll§d§lynn", hours(18)),
+    MEGA_REVAN(listOf("MegaRevanLoot"), "§a§lMega Lord Revan", hours(18)), //y
+    ULTRA_VARSON(listOf("Shroomsteel Chest", "Ultra Varson Loot"), "§c§lUltra Varson", hours(18)), // y
+    CELOSIA(listOf("Floral Loot"), "§e❀ §5§lCe§d§llosia, §2St§aolen §2Th§arone §e❀", hours(18)), //y
+    EVELYNN(listOf("Eve Loot 1", "Eve Loot 2", "Eve Loot 3"), "§4§lEve§5§ll§d§lynn", hours(18)),
 
 
     // Holo
-    HOLO_ONE("Holodeck: Four", "§6§lHolodeck: §e§lFour", minutes(30))
+    HOLO_ONE(listOf("Holodeck One"), "§6§lHolodeck: §e§lOne", minutes(30)),
+    HOLO_TWO(listOf("Holodeck Two"), "§6§lHolodeck: §e§lTwo", minutes(30)),
+    HOLO_THREE(listOf("Holodeck Three"), "§6§lHolodeck: §e§lThree", minutes(30)),
+    HOLO_FOUR(listOf("Holodeck Four"), "§6§lHolodeck: §e§lFour", minutes(30)),
+
+
+    // Dungeons
+    ICE_DUNGEON(listOf("icecave geode"), "§b§lIce Dungeon", hours(3)),
+    THUNDER_DUNGEON(listOf("Thunder Geode"), "§e§lThunder Dungeon", hours(3)),
+    AIR_DUNGEON(listOf("Aerial Atrium Geode"), "§f§lAir Dungeon", hours(3)),
+    FIRE_DUNGEON(listOf("Charred Chest"), "§c§lFire Dungeon", hours(3)),
 
 
     ;
+
     companion object {
         fun getFromContainer(screen: GenericContainerScreen): Lootable? {
             return values().firstOrNull {
-                screen.title.string.equals(it.containerName)
+                it.containerName.any { name ->
+                    screen.title.string.trim() == name
+                }
             }
         }
     }
 
-    // Bosses
 
-
-
-}
-
-fun test() {
-    ScreenEvents.BEFORE_INIT.register { _, screen, _, _ ->
-        if (screen is GenericContainerScreen) {
-            println("OPENED CHEST: " + screen.title.string)
-        }
+    fun getLastKill(betterBossTimer: BetterBossTimer): Long {
+        return betterBossTimer.property<String>("${name.camel()}-lastKill")!!.toLong()
     }
+    fun setLastKill(betterBossTimer: BetterBossTimer, time: Long) {
+        betterBossTimer.customProperties["${name.camel()}-lastKill"] = time.toString()
+    }
+    fun isOnCooldown(betterBossTimer: BetterBossTimer): Boolean {
+        return getLastKill(betterBossTimer) + cooldown > System.currentTimeMillis()
+    }
+    fun getReadyTime(betterBossTimer: BetterBossTimer): Long {
+        return getLastKill(betterBossTimer) + cooldown
+    }
+
 }

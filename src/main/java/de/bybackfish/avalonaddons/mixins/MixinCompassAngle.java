@@ -2,6 +2,7 @@ package de.bybackfish.avalonaddons.mixins;
 
 
 import de.bybackfish.avalonaddons.features.quests.QuestDisplay;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.item.CompassAnglePredicateProvider;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;

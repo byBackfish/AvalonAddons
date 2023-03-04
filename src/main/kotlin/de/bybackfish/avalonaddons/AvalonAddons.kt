@@ -1,7 +1,6 @@
 package de.bybackfish.avalonaddons
 
 import com.mojang.brigadier.arguments.StringArgumentType
-import de.bybackfish.avalonaddons.avalon.test
 import de.bybackfish.avalonaddons.core.event.EventBus
 import de.bybackfish.avalonaddons.core.feature.FeatureManager
 import de.bybackfish.avalonaddons.core.loadTranslations
@@ -14,6 +13,7 @@ import de.bybackfish.avalonaddons.features.quests.QuestDisplay
 import de.bybackfish.avalonaddons.features.quests.QuestOverlay
 import de.bybackfish.avalonaddons.features.render.RarityBackgroundFeature
 import de.bybackfish.avalonaddons.features.ui.GearViewer
+import de.bybackfish.avalonaddons.features.utility.ArmorQuickSwap
 import de.bybackfish.avalonaddons.listeners.AdvancedListeners
 import de.bybackfish.avalonaddons.listeners.ChatListener
 import de.bybackfish.avalonaddons.listeners.NativeListeners
@@ -53,11 +53,6 @@ class AvalonAddons : ModInitializer {
 
         loadTranslations()
 
-        test()
-
-
-        // chat event
-
         featureManager.register(
             BetterBossTimer(),
 
@@ -68,7 +63,9 @@ class AvalonAddons : ModInitializer {
             QuestDisplay(),
 
             AutoTeleportToDeadBoss(),
-            AutoAcceptTeleportRequest()
+            AutoAcceptTeleportRequest(),
+
+            ArmorQuickSwap()
         )
         featureManager.loadToConfig()
 

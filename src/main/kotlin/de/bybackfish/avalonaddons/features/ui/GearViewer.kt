@@ -23,13 +23,8 @@ class GearViewer : Feature() {
     @Property(forceType = PropertyType.SELECTOR, options = ["GUI", "Chat"])
     var displayMode = 1
 
-    var lastTime = -1L
-
     @Keybind(0)
     fun openGearViewer() {
-        if (System.currentTimeMillis() - lastTime < 1000) return
-        lastTime = System.currentTimeMillis()
-
         val playerLookingAt = mc.crosshairTarget
         if (playerLookingAt is EntityHitResult) {
             val entity = playerLookingAt.entity

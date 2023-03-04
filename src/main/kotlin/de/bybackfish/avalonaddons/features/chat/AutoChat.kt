@@ -7,6 +7,7 @@ import de.bybackfish.avalonaddons.core.event.Subscribe
 import de.bybackfish.avalonaddons.core.feature.Feature
 import de.bybackfish.avalonaddons.events.BossDefeatedEvent
 import de.bybackfish.avalonaddons.events.ClientChatEvent
+import de.bybackfish.avalonaddons.extensions.camel
 import gg.essential.universal.ChatColor
 import gg.essential.universal.UChat
 import gg.essential.vigilance.data.PropertyType
@@ -87,7 +88,7 @@ class AutoChat : Feature() {
     fun onBossDeath(event: BossDefeatedEvent) {
         if (automaticallySayGoodLuck) {
             Timer().schedule((Math.random() * 3000 + 500).toLong()) {
-                UChat.say(customGoodLuckMessage.replace("%s", event.boss.textString))
+                UChat.say(customGoodLuckMessage.replace("%s", event.boss.name.camel()))
             }
         }
     }

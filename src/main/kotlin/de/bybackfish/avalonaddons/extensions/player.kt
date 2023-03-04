@@ -1,25 +1,24 @@
 package de.bybackfish.avalonaddons.extensions
 
+import gg.essential.universal.UChat
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
 
-fun PlayerEntity.findItemInHotbar(itemType: Item): ItemStack? {
-    for(i in 0..8) {
+fun PlayerEntity.findItem(min: Int, max: Int, itemType: Item): ItemStack? {
+    for(i in min..max) {
         val itemStack = this.inventory.getStack(i)
         if(itemStack.item == itemType) {
-            this.inventory.selectedSlot = i
             return itemStack
         }
     }
     return null
 }
 
-fun PlayerEntity.findItemInInventory(itemType: Item): ItemStack? {
-    for(i in 9..35) {
+fun PlayerEntity.findItem(min: Int, max: Int, itemName: String): ItemStack? {
+    for(i in min..max) {
         val itemStack = this.inventory.getStack(i)
-        if(itemStack.item == itemType) {
-            this.inventory.selectedSlot = i
+        if(itemStack.name.string.raw == itemName) {
             return itemStack
         }
     }
@@ -27,5 +26,9 @@ fun PlayerEntity.findItemInInventory(itemType: Item): ItemStack? {
 }
 
 fun PlayerEntity.findItemAnywhere(itemType: Item): ItemStack? {
-    return this.findItemInHotbar(itemType) ?: this.findItemInInventory(itemType)
+    return this.findItem(0, 35,  itemType)
+}
+
+fun PlayerEntity.findItemAnywhere(itemName: String): ItemStack? {
+    return this.findItem(0, 35,  itemName)
 }

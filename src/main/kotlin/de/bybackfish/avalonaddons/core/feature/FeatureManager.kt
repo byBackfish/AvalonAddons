@@ -26,11 +26,18 @@ class FeatureManager {
 
     val features = mutableMapOf<KClass<out Feature>, Feature>()
 
+    // last time keybind was pressed
+    private val lastKeybindTime = mutableMapOf<KFunction<*>, Long>()
+    private val KEYBIND_TIMEOUT = 200L
+
     init {
         ClientTickEvents.END_CLIENT_TICK.register(ClientTickEvents.EndTick { _: MinecraftClient ->
             features.forEach { (_, feature) ->
                 if (feature.state != FeatureState.ENABLED) return@forEach
-                feature.featureInfo.keybindings.forEach { keybindSetting ->
+                feature.featureInfo.keybindings.forEach forKeybind@{ keybindSetting ->
+                    if (lastKeybindTime[keybindSetting.function] != null && lastKeybindTime[keybindSetting.function]!! + KEYBIND_TIMEOUT > System.currentTimeMillis()) return@forKeybind
+                    lastKeybindTime[keybindSetting.function] = System.currentTimeMillis()
+
                     if (keybindSetting.keybinding.isPressed) {
                         keybindSetting.function.call(feature)
                     }
@@ -141,11 +148,13 @@ class FeatureManager {
                     featureData
                 )
             }
+
+            feature.loadLocalProperties(config, this, featureData)
         }
 
     }
 
-    private fun <T> nativeRegisterProperty(
+    fun <T> nativeRegisterProperty(
         config: AvalonConfig,
         value: PropertyValue,
         type: PropertyType,
@@ -272,7 +281,9 @@ class FeatureManager {
     }
 
 
-    fun getFeature(clazz: KClass<out Feature>): Feature? = features[clazz]
+    inline fun <reified T : Feature> getFeature(clazz: KClass<out T>): T? {
+        return features[clazz] as? T
+    }
 
     private fun getProperties(clazz: KClass<*>): List<KMutableProperty1<*, *>> {
         println("[Avalon] Raw Members: ${clazz.declaredMemberProperties.size}")

@@ -56,7 +56,7 @@ class ChatListener {
     fun checkBossDefeated(event: ClientChatEvent.Received) {
         var bossData = Bosses.parseFromMessage(event.message)
         if (bossData != null) {
-            BossDefeatedEvent(bossData.boss, bossData.player).call()
+            BossDefeatedEvent(bossData.boss.lootable, bossData.player).call()
         }
     }
 

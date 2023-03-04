@@ -181,11 +181,19 @@ class AvalonConfig : Vigilant(
             val sortingOrder = o1.attributesExt.maxF
             val sortingOrder2 = o2.attributesExt.maxF
 
-            if (sortingOrder != 0f && sortingOrder2 != 0f) {
-                return sortingOrder.compareTo(sortingOrder2)
+            if(sortingOrder == 0f && sortingOrder2 == 0f) {
+                return o1Name.compareTo(o2Name)
             }
 
-            return o1Name.compareTo(o2Name)
+            if(sortingOrder == 0f) {
+                return 1
+            }
+
+            if(sortingOrder2 == 0f) {
+                return -1
+            }
+
+            return sortingOrder.compareTo(sortingOrder2)
         }
     }
 
@@ -193,9 +201,9 @@ class AvalonConfig : Vigilant(
         override fun getPropertyComparator(): Comparator<in PropertyData> {
             // if the property name is "Enabled", put it at the top
             return Comparator { o1, o2 ->
-                if (o1.attributesExt.name == "Enabled") {
+                if (o1.attributesExt.name == "Toggle") {
                     -1
-                } else if (o2.attributesExt.name == "Enabled") {
+                } else if (o2.attributesExt.name == "Toggle") {
                     1
                 } else {
                     compare(o1, o2)

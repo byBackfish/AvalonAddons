@@ -1,6 +1,8 @@
 package de.bybackfish.avalonaddons.features.chat
 
+import de.bybackfish.avalonaddons.AvalonAddons
 import de.bybackfish.avalonaddons.avalon.Bosses
+import de.bybackfish.avalonaddons.avalon.Lootable
 import de.bybackfish.avalonaddons.core.annotations.Category
 import de.bybackfish.avalonaddons.core.annotations.Keybind
 import de.bybackfish.avalonaddons.core.annotations.Property
@@ -9,6 +11,7 @@ import de.bybackfish.avalonaddons.core.event.Subscribe
 import de.bybackfish.avalonaddons.core.feature.Feature
 import de.bybackfish.avalonaddons.events.BossDefeatedEvent
 import de.bybackfish.avalonaddons.events.RenderScreenEvent
+import de.bybackfish.avalonaddons.features.bosses.BetterBossTimer
 import gg.essential.universal.UChat
 import gg.essential.vigilance.data.PropertyType
 import net.minecraft.client.gui.DrawableHelper
@@ -43,7 +46,7 @@ class AutoTeleportToDeadBoss : Feature() {
     var teleportWithoutConfirmation = false
 
     var lastDefeatedBossKillerName: String? = null
-    var lastDefeatedBoss: Bosses? = null
+    var lastDefeatedBoss: Lootable? = null
     var lastDefeatedBossTime = 0L
 
 
@@ -76,7 +79,8 @@ class AutoTeleportToDeadBoss : Feature() {
     @Subscribe
     fun onBossDefeated(event: BossDefeatedEvent) {
         if (event.killer == mc.player?.name?.string) return
-        if (!event.boss.isCooldownOver() && onlyIfNoCooldown) return
+        val betterBossTimer = AvalonAddons.featureManager.getFeature(BetterBossTimer::class)
+        if(betterBossTimer != null && event.boss.isOnCooldown(betterBossTimer) && onlyIfNoCooldown) return
 
         lastDefeatedBoss = event.boss
         lastDefeatedBossKillerName = event.killer
@@ -104,7 +108,7 @@ class AutoTeleportToDeadBoss : Feature() {
         val renderY = screenHeight / 2 - 100
 
         val text =
-            "§a${lastDefeatedBossKillerName} §7has defeated §a§l${lastDefeatedBoss?.textString} §b§lPress §aY§7/§cN §b to §aaccept§7/§ccancel §b the request."
+            "§a${lastDefeatedBossKillerName} §7has defeated §a§l${lastDefeatedBoss?.displayName} §b§lPress §aY§7/§cN §b to §aaccept§7/§ccancel §b the request."
 
         DrawableHelper.fill(
             event.stack,
