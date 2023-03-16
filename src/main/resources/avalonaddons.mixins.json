@@ -12,6 +12,7 @@
     "MixinOptionsHud",
     "MixinPlayerListHud",
     "accessors.AccessorHandledScreen",
+    "accessors.AccessorScreen",
     "render.RenderItem"
   ],
   "injectors": {

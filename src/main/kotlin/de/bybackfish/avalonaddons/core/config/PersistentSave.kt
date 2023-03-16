@@ -43,7 +43,6 @@ abstract class PersistentSave<T : Any>(protected val name: String, val default: 
     }
 
     private fun load() {
-        println("Loading!")
         if(!file.exists()) {
             println("Does not exist")
             file.ensureFile()

@@ -42,8 +42,6 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
     super(title);
   }
 
-  @Shadow
-  protected abstract boolean handleHotbarKeyPressed(int keyCode, int scanCode);
 
   @Inject(at = @At("HEAD"), method = "drawMouseoverTooltip", cancellable = true)
   public void drawMouseOverTooltip(MatrixStack matrices, int x, int y, CallbackInfo ci) {
