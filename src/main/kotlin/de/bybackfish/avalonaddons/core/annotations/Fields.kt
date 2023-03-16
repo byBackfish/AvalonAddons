@@ -5,7 +5,8 @@ import gg.essential.vigilance.data.PropertyType
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class Keybind(
-    val defaultKey: Int = 0
+    val defaultKey: Int = 0,
+    val inGUI: Boolean = false
 )
 
 @Target(AnnotationTarget.CLASS)

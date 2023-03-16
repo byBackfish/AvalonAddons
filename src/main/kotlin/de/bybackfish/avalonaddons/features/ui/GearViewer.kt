@@ -9,6 +9,7 @@ import de.bybackfish.avalonaddons.core.feature.Feature
 import de.bybackfish.avalonaddons.screen.GearViewerScreen
 import gg.essential.universal.UChat
 import gg.essential.vigilance.data.PropertyType
+import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
@@ -21,28 +22,31 @@ import net.minecraft.util.hit.EntityHitResult
 class GearViewer : Feature() {
 
     @Property(forceType = PropertyType.SELECTOR, options = ["GUI", "Chat"])
-    var displayMode = 1
+    var displayMode = 0
+
+    @Property(forceType = PropertyType.SWITCH, description = "Should it also work on Non-Players?")
+    var nonPlayer = false
 
     @Keybind(0)
     fun openGearViewer() {
         val playerLookingAt = mc.crosshairTarget
         if (playerLookingAt is EntityHitResult) {
             val entity = playerLookingAt.entity
-            if (entity !is PlayerEntity) return
-            val player = entity as PlayerEntity
+            if (entity !is LivingEntity) return
+            val living = entity as LivingEntity
+            if(!nonPlayer && living !is PlayerEntity) return
 
-
-            if (displayMode == 1) printInChat(player)
-            else AvalonAddons.guiToOpen = GearViewerScreen(player)
+            if (displayMode == 1) printInChat(living)
+            else AvalonAddons.guiToOpen = GearViewerScreen(living)
         }
 
     }
 
-    fun printInChat(player: PlayerEntity) {
-        val armor = player.armorItems.reversed()
+    fun printInChat(entity: LivingEntity) {
+        val armor = entity.armorItems.reversed()
         val armorTypes = listOf("Helmet", "Chestplate", "Leggings", "Boots")
 
-        UChat.chat("§6 || §aGearViewer §8| §7${player.displayName.string} §6||")
+        UChat.chat("§6 || §aGearViewer §8| §7${entity.displayName.string} §6||")
 
         // Helmet
         armor.forEachIndexed { index, item ->
@@ -50,8 +54,8 @@ class GearViewer : Feature() {
         }
 
         // main hand
-        hoverableText("§bMain Hand: §r", player.mainHandStack)?.let { UChat.chat(it) }
-        hoverableText("§bOff Hand: §r", player.offHandStack)?.let { UChat.chat(it) }
+        hoverableText("§bMain Hand: §r", entity.mainHandStack)?.let { UChat.chat(it) }
+        hoverableText("§bOff Hand: §r", entity.offHandStack)?.let { UChat.chat(it) }
 
         UChat.chat("§6--------------------")
     }

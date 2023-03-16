@@ -66,7 +66,9 @@ class ChatListener {
 
         val match = tpaRegex.find(message) ?: return
         val playerName = match.groupValues[1]
-        TeleportRequestEvent.Incoming(playerName).call()
+        // the player might have a rank, so the name is the last split of the name
+        val actualName = playerName.split(" ").last()
+        TeleportRequestEvent.Incoming(actualName).call()
     }
 
 

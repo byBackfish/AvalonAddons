@@ -21,7 +21,7 @@ abstract class Feature : DrawableHelper() {
     lateinit var featureInfo: FeatureManager.FeatureInfo
     private var _nativeSettings: List<LocalProperty> = listOf()
 
-    var customProperties = mutableMapOf<String, Any>()
+    private var customProperties = mutableMapOf<String, Any>()
 
     val mc: MinecraftClient
         get() = MinecraftClient.getInstance()
@@ -82,6 +82,7 @@ abstract class Feature : DrawableHelper() {
             }
         }
     }
+
     fun addSetting(data: LocalProperty) {
         customProperties[data.name] = data.default
         _nativeSettings += data
@@ -91,8 +92,13 @@ abstract class Feature : DrawableHelper() {
         return customProperties[name] as T?
     }
 
+    fun <T> property(name: String, value: T) {
+        customProperties[name] = value as Any
+        AvalonAddons.config.markDirty()
+    }
 
-    class LocalFeatureProperty(val feature: Feature, private val key: String): PropertyValue() {
+
+    class LocalFeatureProperty(val feature: Feature, private val key: String) : PropertyValue() {
         override fun getValue(instance: Vigilant): Any? {
             return feature.customProperties[key]
         }

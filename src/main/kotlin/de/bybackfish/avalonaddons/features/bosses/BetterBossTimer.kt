@@ -4,6 +4,7 @@ import de.bybackfish.avalonaddons.avalon.Lootable
 import de.bybackfish.avalonaddons.core.annotations.Button
 import de.bybackfish.avalonaddons.core.annotations.Category
 import de.bybackfish.avalonaddons.core.annotations.Property
+import de.bybackfish.avalonaddons.core.config.BossKillConfig
 import de.bybackfish.avalonaddons.core.event.Subscribe
 import de.bybackfish.avalonaddons.core.feature.Feature
 import de.bybackfish.avalonaddons.core.getKey
@@ -11,6 +12,7 @@ import de.bybackfish.avalonaddons.core.translations
 import de.bybackfish.avalonaddons.events.*
 import de.bybackfish.avalonaddons.extensions.camel
 import de.bybackfish.avalonaddons.utils.formatRelativeFutureTime
+import gg.essential.elementa.components.UIText
 import gg.essential.universal.UChat
 import gg.essential.vigilance.data.CallablePropertyValue
 import gg.essential.vigilance.data.PropertyType
@@ -33,7 +35,8 @@ class BetterBossTimer : Feature() {
     )
     fun enableAll() {
         Lootable.values().forEach {
-           customProperties["${it.name.camel()}-render"] = true
+            property("${it.name.camel()}-render", true)
+            player!!.closeScreen()
         }
     }
 
@@ -44,7 +47,8 @@ class BetterBossTimer : Feature() {
     )
     fun disableAll() {
         Lootable.values().forEach {
-           customProperties["${it.name.camel()}-render"] = false
+            property("${it.name.camel()}-render", false)
+            player!!.closeScreen()
         }
     }
 
@@ -55,7 +59,8 @@ class BetterBossTimer : Feature() {
     )
     fun resetAll() {
         Lootable.values().forEach {
-           it.setLastKill(this, 0)
+            it.setLastKill(this, 0)
+            player!!.closeScreen()
         }
     }
 
@@ -88,7 +93,8 @@ class BetterBossTimer : Feature() {
                      sortingOrder = sortingOrder + total,
                      placeholder = "Reset",
                      value = LocalCallableProperty {
-                         println("Resetting ${it.name.camel()}")
+                            it.setLastKill(this, 0)
+                            UChat.chat("§aSuccessfully reset ${it.name.camel()}'s timer!")
                      }
                )
            )
@@ -108,13 +114,15 @@ class BetterBossTimer : Feature() {
     fun onLootableGUI(event: LootableChestEvent) {
         if(event.lootable.isOnCooldown(this)) return
 
+        BossKillConfig.addKill(event.lootable)
         event.lootable.setLastKill(this, System.currentTimeMillis())
-        UChat.chat("§aSuccessfully market ${event.lootable.name.camel()} as looted! You can loot it again in ${event.lootable.cooldown} milliseconds.")
+        UChat.chat("§aSuccessfully marked ${event.lootable.name.camel()} as looted! You can loot it again in ${event.lootable.cooldown} milliseconds.")
     }
 
     @Subscribe
     fun onRender(event: RenderScreenEvent) {
         if(!renderBossTimersOnScreen) return
+        // set text scale
 
         val x = 20
         val y = 20

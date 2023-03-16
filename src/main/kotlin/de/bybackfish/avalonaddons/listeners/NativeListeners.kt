@@ -1,15 +1,13 @@
 package de.bybackfish.avalonaddons.listeners
 
-import de.bybackfish.avalonaddons.avalon.Lootable
 import de.bybackfish.avalonaddons.core.event.EventBus
+import de.bybackfish.avalonaddons.events.ChestOpenEvent
 import de.bybackfish.avalonaddons.events.ClientTickEvent
-import de.bybackfish.avalonaddons.events.LootableChestEvent
 import de.bybackfish.avalonaddons.events.RenderScreenEvent
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents
 import net.minecraft.client.MinecraftClient
-import net.minecraft.client.gui.hud.DebugHud
 import net.minecraft.client.gui.screen.ingame.GenericContainerScreen
 
 class NativeListeners {
@@ -25,11 +23,8 @@ class NativeListeners {
         }))
 
         ScreenEvents.BEFORE_INIT.register { _, screen, _, _ ->
-                if (screen is GenericContainerScreen) {
-                    val lootable = Lootable.getFromContainer(screen)
-                    if (lootable != null) {
-                        LootableChestEvent(lootable, screen).call()
-                }
+            if (screen is GenericContainerScreen) {
+                ChestOpenEvent(screen).call()
             }
         }
     }

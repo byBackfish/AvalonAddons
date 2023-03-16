@@ -72,7 +72,7 @@ class ArmorQuickSwap: Feature() {
 
     private fun equipArmor(slot: Int, itemName: String): String {
         val itemStack = player!!.findItemAnywhere(itemName) ?: return ""
-         val slotOfItem = player!!.inventory.main.indexOf(itemStack)
+        val slotOfItem = player!!.inventory.main.indexOf(itemStack)
 
 
         mc.interactionManager!!.clickSlot(

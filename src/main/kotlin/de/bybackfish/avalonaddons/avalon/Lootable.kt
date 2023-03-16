@@ -49,6 +49,12 @@ enum class Lootable(val containerName: List<String>, val displayName: String, va
                 }
             }
         }
+
+        fun get(name: String): Lootable? {
+            return values().firstOrNull { it ->
+                it.name == name.uppercase() || it.displayName == name || it.containerName.any { name == it }
+            }
+        }
     }
 
 
@@ -56,7 +62,7 @@ enum class Lootable(val containerName: List<String>, val displayName: String, va
         return betterBossTimer.property<String>("${name.camel()}-lastKill")!!.toLong()
     }
     fun setLastKill(betterBossTimer: BetterBossTimer, time: Long) {
-        betterBossTimer.customProperties["${name.camel()}-lastKill"] = time.toString()
+        betterBossTimer.property("${name.camel()}-lastKill", time.toString())
     }
     fun isOnCooldown(betterBossTimer: BetterBossTimer): Boolean {
         return getLastKill(betterBossTimer) + cooldown > System.currentTimeMillis()

@@ -3,6 +3,7 @@ package de.bybackfish.avalonaddons.features.chat
 import de.bybackfish.avalonaddons.core.annotations.Category
 import de.bybackfish.avalonaddons.core.annotations.EnabledByDefault
 import de.bybackfish.avalonaddons.core.annotations.Property
+import de.bybackfish.avalonaddons.core.config.PersistentSave
 import de.bybackfish.avalonaddons.core.event.Subscribe
 import de.bybackfish.avalonaddons.core.feature.Feature
 import de.bybackfish.avalonaddons.events.BossDefeatedEvent

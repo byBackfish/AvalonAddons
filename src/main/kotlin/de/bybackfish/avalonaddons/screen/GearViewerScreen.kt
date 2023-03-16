@@ -1,33 +1,45 @@
 package de.bybackfish.avalonaddons.screen
 
+import gg.essential.elementa.components.UIBlock
+import gg.essential.elementa.components.UIText
+import gg.essential.elementa.dsl.constrain
+import gg.essential.elementa.dsl.pixels
+import gg.essential.universal.UGraphics
+import gg.essential.universal.UResolution
+import gg.essential.universal.USound
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.DrawableHelper
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.client.gui.screen.ingame.InventoryScreen
+import net.minecraft.client.gui.widget.ButtonWidget
 import net.minecraft.client.render.item.ItemRenderer
 import net.minecraft.client.util.math.MatrixStack
+import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
 import net.minecraft.text.Text
+import java.awt.Color
+import java.util.function.Consumer
 import kotlin.math.roundToInt
 
-class GearViewerScreen(val player: PlayerEntity) : Screen(Text.of("Yes Screen")) {
+class GearViewerScreen(val entity: LivingEntity) : Screen(Text.of("Yes Screen")) {
 
-    var armorItems: List<ItemStack>
-    var mainHandItem: ItemStack
-    var offHandItem: ItemStack
+    private lateinit var armorItems: List<ItemStack>
+    private lateinit var mainHandItem: ItemStack
+    private lateinit var offHandItem: ItemStack
 
-    var allItems: List<ItemStack>
-
-    val armorTypes = arrayOf("Helmet", "Chestplate", "Leggings", "Boots")
+    private val armorTypes = arrayOf("Helmet", "Chestplate", "Leggings", "Boots")
 
     init {
-        armorItems = player.armorItems.toList().reversed()
-        mainHandItem = player.mainHandStack
-        offHandItem = player.offHandStack
+        update()
+    }
 
-        allItems = armorItems + mainHandItem + offHandItem
+    private fun update() {
+        USound.playExpSound()
+        armorItems = entity.armorItems.toList().reversed()
+        mainHandItem = entity.mainHandStack
+        offHandItem = entity.offHandStack
     }
 
     override fun render(matrices: MatrixStack?, mouseX: Int, mouseY: Int, delta: Float) {
@@ -39,12 +51,13 @@ class GearViewerScreen(val player: PlayerEntity) : Screen(Text.of("Yes Screen"))
 
 
         val offset = 20;
-        var startX = width / 2;
+        val startX = width / 2;
         val startY = 300;
+
 
         MinecraftClient.getInstance().textRenderer.drawWithShadow(
             matrices,
-            player.displayName.string + "'s Gear",
+            entity.displayName.string + "'s Gear",
             startX.toFloat() - 50,
             startY.toFloat() - 30,
             0xffffff
@@ -57,13 +70,13 @@ class GearViewerScreen(val player: PlayerEntity) : Screen(Text.of("Yes Screen"))
             50,
             (startX + 40 - mouseX).toFloat(),
             (startY + 40 - mouseY).toFloat(),
-            player
+            entity
         )
 
 
 
         for (i in armorItems.indices) {
-            var item = getItemOrDefault(armorItems[i])
+            val item = getItemOrDefault(armorItems[i])
 
             val x = startX
             val y = startY + i * offset
@@ -100,7 +113,7 @@ class GearViewerScreen(val player: PlayerEntity) : Screen(Text.of("Yes Screen"))
         )
     }
 
-    fun renderItem(
+    private fun renderItem(
         matrices: MatrixStack,
         type: String,
         item: ItemStack,

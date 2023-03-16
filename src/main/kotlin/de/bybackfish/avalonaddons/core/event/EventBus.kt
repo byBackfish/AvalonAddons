@@ -29,9 +29,9 @@ class EventBus {
 
     fun post(event: Event): Boolean {
         val eventClass = event::class
-        subscribers[eventClass]?.sortedBy{ it.annotation.priority }?.forEach { subscriber ->
-            if(event.isCancelled && !subscriber.annotation.ignoreCancelled) return@forEach
-            if(subscriber.condition() && !subscriber.annotation.ignoreCondition)
+        subscribers[eventClass]?.sortedBy { -it.annotation.priority }?.forEach { subscriber ->
+            if (event.isCancelled && !subscriber.annotation.ignoreCancelled) return@forEach
+            if (subscriber.condition() && !subscriber.annotation.ignoreCondition)
                 subscriber.method.call(subscriber.instance, event)
         }
         return event.isCancelled

@@ -9,7 +9,6 @@ open class TeleportRequestEvent(val playerName: String) : Event() {
 
     class Incoming(playerName: String) : TeleportRequestEvent(playerName) {
 
-
         fun hideAll() {
             isCancelled = true
             ChatListener.hide("(.+) has requested to teleport to you.+?".toRegex())

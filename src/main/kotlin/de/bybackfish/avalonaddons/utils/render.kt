@@ -8,7 +8,9 @@ import net.minecraft.client.render.block.entity.BeaconBlockEntityRenderer.BEAM_T
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.text.Text
 import net.minecraft.util.DyeColor
+import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
+import net.minecraft.util.math.Matrix4f
 import net.minecraft.util.math.Vec3f
 import java.awt.Color
 import java.lang.Integer.max
@@ -146,4 +148,122 @@ fun Camera.matrixFrom(x: Double, y: Double, z: Double): MatrixStack {
     matrix.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(yaw + 180.0f))
     matrix.translate(x - pos.x, y - pos.y, z - pos.z)
     return matrix
+}
+
+
+fun drawTexturedRect(
+    matrices: MatrixStack,
+    texture: Identifier,
+    x: Int,
+    y: Int,
+    width: Int,
+    height: Int
+) {
+    drawTexturedRect(
+        matrices,
+        texture,
+        x,
+        y,
+        width,
+        height,
+        width,
+        height
+    )
+}
+
+fun drawTexturedRect(
+    matrices: MatrixStack,
+    tex: Identifier?,
+    x: Int,
+    y: Int,
+    width: Int,
+    height: Int,
+    textureWidth: Int,
+    textureHeight: Int
+) {
+    drawTexturedRect(
+        matrices,
+        tex,
+        x,
+        y,
+        0,
+        width,
+        height,
+        0,
+        0,
+        width.toInt(),
+        height.toInt(),
+        textureWidth,
+        textureHeight
+    )
+}
+
+fun drawTexturedRect(
+    matrices: MatrixStack,
+    tex: Identifier?,
+    x: Int,
+    y: Int,
+    z: Int,
+    width: Int,
+    height: Int,
+    textureWidth: Int,
+    textureHeight: Int
+) {
+    drawTexturedRect(
+        matrices,
+        tex,
+        x,
+        y,
+        z,
+        width,
+        height,
+        0,
+        0,
+        width.toInt(),
+        height.toInt(),
+        textureWidth,
+        textureHeight
+    )
+}
+
+fun drawTexturedRect(
+    matrices: MatrixStack,
+    tex: Identifier?,
+    x: Int,
+    y: Int,
+    z: Int,
+    width: Int,
+    height: Int,
+    uOffset: Int,
+    vOffset: Int,
+    u: Int,
+    v: Int,
+    textureWidth: Int,
+    textureHeight: Int
+) {
+    val uScale = 1f / textureWidth
+    val vScale = 1f / textureHeight
+    val matrix: Matrix4f = matrices.peek().positionMatrix
+    RenderSystem.setShader { GameRenderer.getPositionTexShader() }
+    RenderSystem.setShaderTexture(0, tex)
+    val bufferBuilder: BufferBuilder = Tessellator.getInstance().buffer
+    bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE)
+    bufferBuilder
+        .vertex(matrix, x.toFloat(), (y + height).toFloat(), z.toFloat())
+        .texture(uOffset * uScale, (vOffset + v) * vScale)
+        .next()
+    bufferBuilder
+        .vertex(matrix, (x + width).toFloat(), (y + height).toFloat(), z.toFloat())
+        .texture((uOffset + u) * uScale, (vOffset + v) * vScale)
+        .next()
+    bufferBuilder
+        .vertex(matrix, (x + width).toFloat(), y.toFloat(), z.toFloat())
+        .texture((uOffset + u) * uScale, vOffset * vScale)
+        .next()
+    bufferBuilder
+        .vertex(matrix, x.toFloat(), y.toFloat(), z.toFloat())
+        .texture(uOffset * uScale, vOffset * vScale)
+        .next()
+
+    BufferRenderer.drawWithShader(bufferBuilder.end())
 }

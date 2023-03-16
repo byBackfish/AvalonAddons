@@ -5,9 +5,11 @@ import de.bybackfish.avalonaddons.AvalonConfig
 import de.bybackfish.avalonaddons.core.annotations.*
 import de.bybackfish.avalonaddons.core.annotations.Category
 import de.bybackfish.avalonaddons.core.annotations.Property
+import de.bybackfish.avalonaddons.core.event.Subscribe
 import de.bybackfish.avalonaddons.core.feature.struct.FeatureState
 import de.bybackfish.avalonaddons.core.getKey
 import de.bybackfish.avalonaddons.core.getTranslatedName
+import de.bybackfish.avalonaddons.events.GUIKeyPressEvent
 import gg.essential.vigilance.Vigilant
 import gg.essential.vigilance.data.*
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
@@ -35,17 +37,34 @@ class FeatureManager {
             features.forEach { (_, feature) ->
                 if (feature.state != FeatureState.ENABLED) return@forEach
                 feature.featureInfo.keybindings.forEach forKeybind@{ keybindSetting ->
-                    if (lastKeybindTime[keybindSetting.function] != null && lastKeybindTime[keybindSetting.function]!! + KEYBIND_TIMEOUT > System.currentTimeMillis()) return@forKeybind
-                    lastKeybindTime[keybindSetting.function] = System.currentTimeMillis()
 
-                    if (keybindSetting.keybinding.isPressed) {
+                    if (keybindSetting.keybinding.wasPressed() && !keybindSetting.annotation.inGUI) {
                         keybindSetting.function.call(feature)
                     }
                 }
             }
         })
+    }
 
+    @Subscribe
+    fun onGuiKey(event: GUIKeyPressEvent) {
+        features.forEach { (_, feature) ->
+            if (feature.state != FeatureState.ENABLED) return@forEach
+            feature.featureInfo.keybindings.forEach { keybindSetting ->
 
+                if (keybindSetting.keybinding.matchesKey(
+                        event.key,
+                        event.scanCode
+                    ) && keybindSetting.annotation.inGUI
+                ) {
+                    if (keybindSetting.function.parameters.size == 2) {
+                        keybindSetting.function.call(feature, event)
+                    } else {
+                        keybindSetting.function.call(feature)
+                    }
+                }
+            }
+        }
     }
 
     fun register(vararg features: Feature) {

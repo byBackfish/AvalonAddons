@@ -39,7 +39,7 @@ class AutoAcceptTeleportRequest : Feature() {
     var selfKilledABoss = false
     var lastBossKill = 0L
 
-    @Subscribe
+    @Subscribe(priority = 1)
     fun onTeleportRequestIncoming(event: TeleportRequestEvent.Incoming) {
         if (alwaysAccept) {
             event.accept()
