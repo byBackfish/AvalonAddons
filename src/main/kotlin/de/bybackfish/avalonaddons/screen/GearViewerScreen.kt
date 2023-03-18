@@ -11,7 +11,6 @@ import gg.essential.elementa.constraints.CenterConstraint
 import gg.essential.elementa.dsl.*
 import gg.essential.universal.UMatrixStack
 import gg.essential.universal.USound
-import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.entity.LivingEntity
@@ -19,7 +18,6 @@ import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
 import net.minecraft.text.Text
 import java.awt.Color
-import javax.swing.text.StyleConstants.ColorConstants
 
 class GearViewerScreen(val entity: LivingEntity) : Screen(Text.of("Yes Screen")) {
 
@@ -59,8 +57,8 @@ class GearViewerScreen(val entity: LivingEntity) : Screen(Text.of("Yes Screen"))
 
         armorItems.forEachIndexed { index, item->
             UIBlock(boxColor).constrain {
-                x = CenterConstraint().minus(xOffset)
-                y = startY.plus(offset * index)
+                x = CenterConstraint().minus(xOffset).plus(2.pixels())
+                y = startY.plus(offset * index).plus(2.pixels())
                 width = 20.pixels()
                 height = 20.pixels()
                 zOffset = -1
@@ -73,8 +71,8 @@ class GearViewerScreen(val entity: LivingEntity) : Screen(Text.of("Yes Screen"))
         }
 
         UIBlock(boxColor).constrain {
-            x = CenterConstraint().plus(xOffset)
-            y = startY.plus(offset * 0.5)
+            x = CenterConstraint().plus(xOffset).plus(2.pixels())
+            y = startY.plus(offset * 0.5).plus(2.pixels())
             width = 20.pixels()
             height = 20.pixels()
             zOffset = -1
@@ -86,8 +84,8 @@ class GearViewerScreen(val entity: LivingEntity) : Screen(Text.of("Yes Screen"))
         } childOf window
 
         UIBlock(boxColor).constrain {
-            x = CenterConstraint().plus(xOffset)
-            y = startY.plus(offset * 2.5)
+            x = CenterConstraint().plus(xOffset).plus(2.pixels())
+            y = startY.plus(offset * 2.5).plus(2.pixels())
             width = 20.pixels()
             height = 20.pixels()
             zOffset = -1

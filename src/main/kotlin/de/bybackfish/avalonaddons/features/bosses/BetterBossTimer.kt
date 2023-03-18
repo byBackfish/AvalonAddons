@@ -12,14 +12,22 @@ import de.bybackfish.avalonaddons.core.translations
 import de.bybackfish.avalonaddons.events.*
 import de.bybackfish.avalonaddons.extensions.camel
 import de.bybackfish.avalonaddons.utils.formatRelativeFutureTime
+import gg.essential.elementa.ElementaVersion
 import gg.essential.elementa.components.UIText
+import gg.essential.elementa.components.Window
+import gg.essential.elementa.constraints.*
+import gg.essential.elementa.dsl.*
 import gg.essential.universal.UChat
-import gg.essential.vigilance.data.CallablePropertyValue
+import gg.essential.universal.UMatrixStack
 import gg.essential.vigilance.data.PropertyType
 import java.util.*
 
 @Category("Bosses")
 class BetterBossTimer : Feature() {
+
+    val window = Window(ElementaVersion.V2)
+    val bossTimers = mutableMapOf<Lootable, UIText>()
+
 
     @Property(
         description = "Should the Boss Timers be rendered on screen?",
@@ -106,13 +114,25 @@ class BetterBossTimer : Feature() {
                    type = PropertyType.TEXT,
                    hidden = true,
                    sortingOrder = sortingOrder + total * 2 + index,
-               ))
+               )
+           )
        }
     }
 
+    override fun postInit() {
+        for (it in Lootable.values()) {
+            val text = UIText(it.displayName).constrain {
+                x = 20.pixels()
+                y = 0.pixels()
+            } childOf window
+            bossTimers[it] = text
+        }
+    }
+
+
     @Subscribe
     fun onLootableGUI(event: LootableChestEvent) {
-        if(event.lootable.isOnCooldown(this)) return
+        if (event.lootable.isOnCooldown(this)) return
 
         BossKillConfig.addKill(event.lootable)
         event.lootable.setLastKill(this, System.currentTimeMillis())
@@ -121,26 +141,35 @@ class BetterBossTimer : Feature() {
 
     @Subscribe
     fun onRender(event: RenderScreenEvent) {
-        if(!renderBossTimersOnScreen) return
-        // set text scale
+        if (!renderBossTimersOnScreen) return
+        var totalHeight: Float = 0f
 
-        val x = 20
-        val y = 20
+        var i = 0f
+        bossTimers.entries.forEachIndexed { index, (boss, text) ->
+            val shouldRender = property<Boolean>("${boss.name.camel()}-render") ?: false
+            if (!shouldRender) return@forEachIndexed
 
-        val yOffset = 10
-
-        Lootable.values().forEachIndexed { index, it ->
-            val shouldRender = property<Boolean>("${it.name.camel()}-render") ?: false
-            if(!shouldRender) return@forEachIndexed
-
-            val status = if (!it.isOnCooldown(this)) "§aReady" else {
-                val longerThanHour = it.getReadyTime(this) - System.currentTimeMillis() > 60 * 60 * 1000L
-                "§${if (longerThanHour) "c" else "e"}${formatRelativeFutureTime(Date(it.getReadyTime(this)))}"
+            val status = if (!boss.isOnCooldown(this)) "§aReady" else {
+                val longerThanHour =
+                    boss.getReadyTime(this) - System.currentTimeMillis() > 60 * 60 * 1000L
+                "§${if (longerThanHour) "c" else "e"}${
+                    formatRelativeFutureTime(
+                        Date(
+                            boss.getReadyTime(
+                                this
+                            )
+                        )
+                    )
+                }"
             }
-            val text = "§l${it.displayName}§r§7: §l$status"
+            val content = "§l${boss.displayName}§r§7: §l$status"
 
-            drawStringWithShadow(event.stack, mc.textRenderer, text, x, (y + (index * yOffset)), -1)
+            text.setText(content)
+            text.setY((20 + i * 10f).pixels())
+            text.draw(UMatrixStack(event.stack))
+            i++
         }
     }
 
 }
+

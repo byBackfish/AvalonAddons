@@ -4,7 +4,6 @@ import com.mojang.brigadier.arguments.StringArgumentType
 import de.bybackfish.avalonaddons.AvalonAddons
 import de.bybackfish.avalonaddons.core.config.FriendStatus
 import de.bybackfish.avalonaddons.core.config.FriendsConfig
-import de.bybackfish.avalonaddons.core.config.PersistentSave
 import de.bybackfish.avalonaddons.events.ClientChatEvent
 import gg.essential.universal.UChat
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument
@@ -58,13 +57,13 @@ class AvalonAddonsCommand {
                                     StringArgumentType.word()
                                 ).executes { ctx ->
                                     val username = StringArgumentType.getString(ctx, "username")
-                                    if(FriendsConfig.unfriend(username))
+                                    if (FriendsConfig.unfriend(username))
                                         UChat.chat("Removed $username from your friends list")
                                     else
                                         UChat.chat("You can't remove yourself from your friends list")
                                     1
                                 })
-                        ).then(literal("list").executes { ctx ->
+                        ).then(literal("list").executes {
                             val friends =
                                 FriendsConfig.get().get(FriendStatus.FRIEND) ?: mutableListOf()
                             if (friends.isEmpty()) {

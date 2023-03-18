@@ -41,6 +41,8 @@ abstract class Feature : DrawableHelper() {
         AvalonAddons.bus.register(this, condition)
     }
 
+    open fun postInit() {}
+
     fun toggle() {
         state = if (state == FeatureState.ENABLED) FeatureState.DISABLED else FeatureState.ENABLED
     }
