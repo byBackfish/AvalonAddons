@@ -7,15 +7,19 @@ import java.io.Reader
 import java.io.Writer
 
 object FriendsConfig: PersistentSave<MutableMap<FriendStatus, MutableList<String>>>("friends", mutableMapOf()) {
-    override fun read(data: Reader) {
-        this.data = Json.decodeFromString(data.readText())
+    override fun read(json: Json, data: Reader) {
+        this.data = json.decodeFromString(data.readText())
     }
 
-    override fun write(writer: Writer) {
-        writer.write(Json.encodeToString(data))
+    override fun write(json: Json, writer: Writer) {
+        writer.write(json.encodeToString(data))
     }
-    fun ignore(username: String) :Boolean {
-        if (get()[FriendStatus.FRIEND]?.contains(username) == true || get()[FriendStatus.IGNORED]?.contains(username) == true) return false
+
+    fun ignore(username: String): Boolean {
+        if (get()[FriendStatus.FRIEND]?.contains(username) == true || get()[FriendStatus.IGNORED]?.contains(
+                username
+            ) == true
+        ) return false
 
         val current = get()[FriendStatus.IGNORED] ?: mutableListOf()
         current.add(username)

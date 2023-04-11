@@ -8,6 +8,7 @@ import gg.essential.elementa.components.UIBlock
 import gg.essential.elementa.components.UIText
 import gg.essential.elementa.components.Window
 import gg.essential.elementa.constraints.CenterConstraint
+import gg.essential.elementa.constraints.SiblingConstraint
 import gg.essential.elementa.dsl.*
 import gg.essential.universal.UMatrixStack
 import gg.essential.universal.USound
@@ -55,54 +56,50 @@ class GearViewerScreen(val entity: LivingEntity) : Screen(Text.of("Yes Screen"))
             textScale = 40.pixels()
         } childOf window
 
-        armorItems.forEachIndexed { index, item->
-            UIBlock(boxColor).constrain {
-                x = CenterConstraint().minus(xOffset).plus(2.pixels())
-                y = startY.plus(offset * index).plus(2.pixels())
+        armorItems.forEachIndexed { index, item ->
+            val block = UIBlock(boxColor).constrain {
+                x = CenterConstraint().minus(xOffset).minus(2.pixels())
+                y = startY.plus(offset * index).minus(2.pixels())
                 width = 20.pixels()
                 height = 20.pixels()
-                zOffset = -1
             } childOf window
 
-            UIItem(item, dummyItem(armorTypes[index])).constrain {
-                x = CenterConstraint().minus(xOffset)
-                y = startY.plus(offset * index)
-            } childOf window
+            UIItem(item, dummyItem(armorTypes[index]), ::renderTooltip).constrain {
+                x = SiblingConstraint().plus(2.pixels())
+                y = SiblingConstraint().plus(2.pixels())
+                zOffset = -5
+            } childOf block
         }
 
-        UIBlock(boxColor).constrain {
-            x = CenterConstraint().plus(xOffset).plus(2.pixels())
-            y = startY.plus(offset * 0.5).plus(2.pixels())
+        val mainBlock = UIBlock(boxColor).constrain {
+            x = CenterConstraint().plus(xOffset).minus(2.pixels())
+            y = startY.plus(offset * 0.5).minus(2.pixels())
             width = 20.pixels()
             height = 20.pixels()
-            zOffset = -1
         } childOf window
 
-        UIItem(mainHandItem, dummyItem("Mainhand")).constrain {
-            x = centerX.plus(xOffset)
-            y = startY.plus(offset * 0.5)
-        } childOf window
+        UIItem(mainHandItem, dummyItem("Mainhand"), ::renderTooltip).constrain {
+            x = SiblingConstraint().plus(2.pixels())
+            y = SiblingConstraint().plus(2.pixels())
+        } childOf mainBlock
 
-        UIBlock(boxColor).constrain {
-            x = CenterConstraint().plus(xOffset).plus(2.pixels())
-            y = startY.plus(offset * 2.5).plus(2.pixels())
+        val offBlock = UIBlock(boxColor).constrain {
+            x = CenterConstraint().plus(xOffset).minus(2.pixels())
+            y = startY.plus(offset * 2.5).minus(2.pixels())
             width = 20.pixels()
             height = 20.pixels()
-            zOffset = -1
         } childOf window
 
-        UIItem(offHandItem, dummyItem("Offhand")).constrain {
-            x = centerX.plus(xOffset)
-            y = startY.plus(offset * 2.5)
-        } childOf window
-
+        UIItem(offHandItem, dummyItem("Offhand"), ::renderTooltip).constrain {
+            x = SiblingConstraint().plus(2.pixels())
+            y = SiblingConstraint().plus(2.pixels())
+        } childOf offBlock
 
         val buttonBlock = UIBlock(boxColor).constrain {
             x = CenterConstraint()
             y = startY.plus(offset * 5)
             width = 60.pixels()
             height = 20.pixels()
-            zOffset = -1
         } childOf window
 
         UIText("§aUpdate").constrain {

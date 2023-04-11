@@ -3,6 +3,7 @@ package de.bybackfish.avalonaddons.events
 
 import de.bybackfish.avalonaddons.core.event.Event
 import de.bybackfish.avalonaddons.listeners.ChatListener
+import gg.essential.universal.UChat
 import net.minecraft.client.MinecraftClient
 
 open class TeleportRequestEvent(val playerName: String) : Event() {
@@ -23,7 +24,7 @@ open class TeleportRequestEvent(val playerName: String) : Event() {
     }
 
     fun accept() {
-        MinecraftClient.getInstance().player?.sendCommand("tpyes")
+        MinecraftClient.getInstance().player!!.networkHandler.sendCommand("tpyes")
         ChatListener.hide("Teleport request accepted.")
     }
 

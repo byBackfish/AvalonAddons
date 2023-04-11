@@ -41,4 +41,5 @@ public abstract class GenericContainerMixin extends ScreenHandler {
     new ChestCloseEvent(container).call();
   }
 
+
 }

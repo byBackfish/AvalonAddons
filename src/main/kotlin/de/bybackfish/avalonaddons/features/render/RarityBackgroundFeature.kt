@@ -8,6 +8,7 @@ import de.bybackfish.avalonaddons.core.event.Subscribe
 import de.bybackfish.avalonaddons.core.feature.Feature
 import de.bybackfish.avalonaddons.events.ItemRenderGUIEvent
 import de.bybackfish.avalonaddons.extensions.drawColoredTexture
+import gg.essential.universal.UGraphics
 import gg.essential.vigilance.data.PropertyType
 import net.minecraft.client.render.*
 import net.minecraft.client.util.math.MatrixStack
@@ -121,6 +122,7 @@ class RarityBackgroundFeature : Feature() {
     @Subscribe
     fun onEvent(event: ItemRenderGUIEvent) {
         val item = event.item
+        if (item.nbt?.getBoolean("hiderarity") == true) return
         val rarity = ItemRarity.getFromItem(item) ?: return
         val color = getColor(rarity) ?: return
 
@@ -128,7 +130,6 @@ class RarityBackgroundFeature : Feature() {
 
         val depthEnabled = GL11.glIsEnabled(GL11.GL_DEPTH_TEST)
         if (depthEnabled) RenderSystem.disableDepthTest()
-
 
         RenderSystem.enableBlend()
 
@@ -147,6 +148,7 @@ class RarityBackgroundFeature : Feature() {
 
     private fun getColor(itemRarity: ItemRarity): Color? {
         return when (itemRarity) {
+            ItemRarity.TRASH -> trashColor
             ItemRarity.COMMON -> commonColor
             ItemRarity.UNCOMMON -> uncommonColor
             ItemRarity.RARE -> rareColor

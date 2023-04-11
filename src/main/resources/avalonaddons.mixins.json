@@ -6,20 +6,19 @@
   "client": [
     "GenericContainerMixin",
     "HandledScreenMixin",
+    "InventoryScreenMixin",
     "MixinChatScreen",
     "MixinClientConnection",
     "MixinCompassAngle",
+    "MixinNetworkManager",
     "MixinOptionsHud",
-    "MixinPlayerListHud",
+    "MixinScreen",
+    "PlayerEntityMixin",
     "accessors.AccessorHandledScreen",
     "accessors.AccessorScreen",
     "render.RenderItem"
   ],
   "injectors": {
     "defaultRequire": 1
-  },
-  "mixins": [
-    "MixinNetworkManager",
-    "PlayerEntityMixin"
-  ]
+  }
 }

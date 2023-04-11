@@ -20,8 +20,8 @@ public abstract class MixinOptionsHud extends Screen {
   @Inject(method = "initWidgets", at = @At("HEAD"))
   private void initWidgets(CallbackInfo ci) {
     this.addDrawableChild(
-        new ButtonWidget(20, 20, 98, 20, Text.literal("AvalonAddons"), (button) -> {
+        ButtonWidget.builder(Text.of("AvalonAddons"), (button) -> {
           AvalonAddons.Companion.setGuiToOpen(AvalonAddons.Companion.getConfig().gui());
-        }));
+        }).position(20, 20).size(98, 20).build());
   }
 }

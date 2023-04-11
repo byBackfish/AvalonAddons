@@ -1,9 +1,9 @@
 package de.bybackfish.avalonaddons.extensions
 
 import com.mojang.blaze3d.systems.RenderSystem
+import net.minecraft.client.gui.DrawableHelper
 import net.minecraft.client.render.*
 import net.minecraft.client.util.math.MatrixStack
-import net.minecraft.util.math.Matrix4f
 import java.awt.Color
 
 
@@ -26,7 +26,7 @@ public fun drawColoredTexture(
     val y0 = y;
     val y1 = y + height;
 
-    val z = 0;
+    val z = -11;
 
     val regionWidth = width
     val regionHeight = height
@@ -39,7 +39,7 @@ public fun drawColoredTexture(
     val v0 = (v + 0.0f) / textureHeight.toFloat()
     val v1 = (v + regionHeight.toFloat()) / textureHeight.toFloat()
 
-    RenderSystem.setShader { GameRenderer.getPositionColorTexShader() }
+    RenderSystem.setShader { GameRenderer.getPositionColorTexProgram() }
     val bufferBuilder = Tessellator.getInstance().buffer
     bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR_TEXTURE)
 
@@ -60,5 +60,5 @@ public fun drawColoredTexture(
         .color(color.red, color.green, color.blue, color.alpha)
         .texture(u0, v0).next()
 
-    BufferRenderer.drawWithShader(bufferBuilder.end())
+    BufferRenderer.drawWithGlobalProgram(bufferBuilder.end())
 }

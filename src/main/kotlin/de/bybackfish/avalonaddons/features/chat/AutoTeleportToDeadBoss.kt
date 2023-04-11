@@ -57,7 +57,7 @@ class AutoTeleportToDeadBoss : Feature() {
         if (hasExpired()) return
 
         UChat.chat("§aTeleporting to §b${lastDefeatedBossKillerName}§a...")
-        mc.player?.sendCommand("tpa $lastDefeatedBossKillerName")
+        mc.player?.networkHandler!!.sendCommand("tpa $lastDefeatedBossKillerName")
 
         lastDefeatedBoss = null
         lastDefeatedBossTime = 0L

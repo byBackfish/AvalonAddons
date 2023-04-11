@@ -8,12 +8,12 @@ import java.io.Writer
 
 object LockedSlotsConfig: PersistentSave<MutableList<Double>>("lockedSlots", mutableListOf()) {
 
-    override fun read(data: Reader) {
-        this.data = Json.decodeFromString(data.readText())
+    override fun read(json: Json, data: Reader) {
+        this.data = json.decodeFromString(data.readText())
     }
 
-    override fun write(writer: Writer) {
-        writer.write(Json.encodeToString(data))
+    override fun write(json: Json, writer: Writer) {
+        writer.write(json.encodeToString(data))
     }
 
     fun isLocked(slot: Int): Boolean {
@@ -22,7 +22,7 @@ object LockedSlotsConfig: PersistentSave<MutableList<Double>>("lockedSlots", mut
 
     fun toggle(slot: Int): Boolean {
         val list = get()
-        return if(list.contains(slot.toDouble())) {
+        return if (list.contains(slot.toDouble())) {
             list.remove(slot.toDouble())
             markDirty<LockedSlotsConfig>()
             false

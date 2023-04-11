@@ -8,12 +8,12 @@ import java.io.Reader
 import java.io.Writer
 
 object BossKillConfig: PersistentSave<MutableMap<Lootable, Int>>("bossKills", mutableMapOf()) {
-    override fun read(data: Reader) {
-        this.data = Json.decodeFromString(data.readText())
+    override fun read(json: Json, data: Reader) {
+        this.data = json.decodeFromString(data.readText())
     }
 
-    override fun write(writer: Writer) {
-        writer.write(Json.encodeToString(data))
+    override fun write(json: Json, writer: Writer) {
+        writer.write(json.encodeToString(data))
     }
 
     fun getKills(lootable: Lootable): Int {

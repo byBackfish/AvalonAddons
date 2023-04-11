@@ -303,6 +303,10 @@ class FeatureManager {
     inline fun <reified T : Feature> getFeature(clazz: KClass<out T>): T? {
         return features[clazz] as? T
     }
+    // make it so i can use getFeature<ItemViewer>()
+    inline fun <reified T : Feature> getFeature(): T? {
+        return features[T::class] as? T
+    }
 
     private fun getProperties(clazz: KClass<*>): List<KMutableProperty1<*, *>> {
         println("[Avalon] Raw Members: ${clazz.declaredMemberProperties.size}")

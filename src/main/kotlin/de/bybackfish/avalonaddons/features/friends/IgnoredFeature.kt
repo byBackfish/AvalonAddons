@@ -2,7 +2,6 @@ package de.bybackfish.avalonaddons.features.friends
 
 import de.bybackfish.avalonaddons.core.annotations.Category
 import de.bybackfish.avalonaddons.core.annotations.Property
-import de.bybackfish.avalonaddons.core.config.FriendStatus
 import de.bybackfish.avalonaddons.core.config.FriendsConfig
 import de.bybackfish.avalonaddons.core.event.Subscribe
 import de.bybackfish.avalonaddons.core.feature.Feature
@@ -50,7 +49,7 @@ class IgnoredFeature : Feature() {
         if(!FriendsConfig.isIgnored(playerName.value)) return
 
         event.isCancelled = true
-        UChat.say("$playerName joined the game")
+        UChat.chat("$playerName joined the game")
     }
 
 

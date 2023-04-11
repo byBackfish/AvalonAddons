@@ -2,9 +2,13 @@ package de.bybackfish.avalonaddons.commands
 
 import com.mojang.brigadier.arguments.StringArgumentType
 import de.bybackfish.avalonaddons.AvalonAddons
+import de.bybackfish.avalonaddons.avalon.Lootable
 import de.bybackfish.avalonaddons.core.config.FriendStatus
 import de.bybackfish.avalonaddons.core.config.FriendsConfig
+import de.bybackfish.avalonaddons.core.config.ItemConfig
 import de.bybackfish.avalonaddons.events.ClientChatEvent
+import de.bybackfish.avalonaddons.features.bosses.BetterBossTimer
+import de.bybackfish.avalonaddons.features.ui.ItemViewer
 import gg.essential.universal.UChat
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal
@@ -20,6 +24,15 @@ class AvalonAddonsCommand {
                         AvalonAddons.guiToOpen = AvalonAddons.config.gui()
                         1
                     }
+                    .then(literal("reloadcache").executes { ctx ->
+                        UChat.chat(AvalonAddons.PREFIX + "§7Reloading cache...")
+                        Thread {
+                            ItemConfig.loadFromAPI()
+                            AvalonAddons.featureManager.getFeature<ItemViewer>()?.postInit()
+                            UChat.chat(AvalonAddons.PREFIX + "§aSuccessfully reloaded the cache!")
+                        }.start()
+                        1
+                    })
                     .then(
                         literal("dm").then(
                             argument(
@@ -30,7 +43,10 @@ class AvalonAddonsCommand {
                                 AvalonAddons.bus.post(ClientChatEvent(message.replace("&&", "§")))
                                 1
                             })
-                    )
+                    ).then(literal("test").executes { ctx ->
+
+                        1
+                    })
 
 
                     /* FRIENDS */

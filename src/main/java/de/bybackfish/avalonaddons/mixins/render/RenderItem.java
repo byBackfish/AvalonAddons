@@ -12,9 +12,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class RenderItem {
 
   @Inject(method = "renderGuiItemModel", at = @At("HEAD"), cancellable = true)
-  public void renderGUIItemModel(ItemStack itemStack, int x, int y, BakedModel model,
-      CallbackInfo ci) {
-    if (new ItemRenderGUIEvent(itemStack, x, y, model).call()) {
+  public void renderGUIItemModel(ItemStack stack, int x, int y, BakedModel model, CallbackInfo ci) {
+    if (new ItemRenderGUIEvent(stack, x, y).call()) {
       ci.cancel();
     }
   }

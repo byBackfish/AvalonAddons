@@ -4,6 +4,10 @@ import de.bybackfish.avalonaddons.events.DrawSlotEvent;
 import de.bybackfish.avalonaddons.events.GUIKeyPressEvent;
 import de.bybackfish.avalonaddons.events.ItemActionEvent;
 import de.bybackfish.avalonaddons.events.RenderTooltipEvent;
+import de.bybackfish.avalonaddons.events.gui.ClickGuiEvent;
+import de.bybackfish.avalonaddons.events.gui.CloseGuiEvent;
+import de.bybackfish.avalonaddons.events.gui.InitGuiEvent;
+import de.bybackfish.avalonaddons.events.gui.RenderGuiEvent;
 import java.util.Objects;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
@@ -41,7 +45,6 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
   protected HandledScreenMixin(Text title) {
     super(title);
   }
-
 
   @Inject(at = @At("HEAD"), method = "drawMouseoverTooltip", cancellable = true)
   public void drawMouseOverTooltip(MatrixStack matrices, int x, int y, CallbackInfo ci) {
@@ -103,5 +106,37 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
       }
     }
   }
+
+  @Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
+  public void mouseClicked(double mouseX, double mouseY, int button,
+      CallbackInfoReturnable<Boolean> cir) {
+    if (new ClickGuiEvent(mouseX, mouseY, button).call()) {
+      cir.setReturnValue(true);
+    }
+  }
+
+  @Inject(method = "init()V", at = @At("TAIL"))
+  public void init(CallbackInfo ci) {
+    Screen that = (Screen) (Object) this;
+    new InitGuiEvent(that).call();
+  }
+
+  @Inject(method = "render", at = @At("HEAD"), cancellable = true)
+  public void drawBackground(MatrixStack matrices, int mouseX, int mouseY, float delta,
+      CallbackInfo ci) {
+    Screen that = (Screen) (Object) this;
+    if (new RenderGuiEvent(that, matrices, mouseX, mouseY, delta).call()) {
+      ci.cancel();
+    }
+  }
+
+  @Inject(method = "close", at = @At("HEAD"), cancellable = true)
+  public void close(CallbackInfo ci) {
+    if (new CloseGuiEvent().call()) {
+      ci.cancel();
+    }
+  }
+
+
 
 }

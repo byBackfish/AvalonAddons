@@ -11,4 +11,5 @@ public interface AccessorHandledScreen {
   @Invoker("isPointOverSlot")
   boolean isPointOver(Slot slot, double pointX, double pointY);
 
+
 }

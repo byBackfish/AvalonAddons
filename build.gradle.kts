@@ -3,6 +3,9 @@ plugins {
     id("fabric-loom")
     `maven-publish`
     java
+
+    // kotlinx.serialization
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.5.31"
 }
 
 group = property("maven_group")!!
@@ -31,20 +34,15 @@ configurations.modImplementation {
     exclude("gg.essential", "universalcraft-*")
 }
 
-loom {
-
-}
-
-
-
 dependencies {
     minecraft("com.mojang:minecraft:${mcVersion}")
     mappings("net.fabricmc:yarn:${property("yarn_mappings")}:v2")
     modImplementation("net.fabricmc:fabric-loader:${property("loader_version")}")
-    modImplementation("net.fabricmc.fabric-api:fabric-api:${property("fabric_api_version")}")
+    modImplementation("net.fabricmc.fabric-api:fabric-api:${property("fabric_version")}")
 
 
     modImplementation("net.fabricmc:fabric-language-kotlin:${property("fabric_kotlin_version")}")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1")
 
     modRuntimeOnly("me.djtheredstoner:DevAuth-fabric:1.1.0")
 
@@ -52,7 +50,7 @@ dependencies {
 
     modImplementation(include("gg.essential:elementa-1.18.1-fabric:576+pull-104")!!)
     modImplementation(include("gg.essential:vigilance-1.18.1-fabric:280")!!)
-    modImplementation(include("gg.essential:universalcraft-1.19.2-fabric:254")!!)
+    modImplementation(include("gg.essential:universalcraft-1.19.3-fabric:+")!!)
 }
 
 tasks {

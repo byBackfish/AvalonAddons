@@ -2,21 +2,10 @@ package de.bybackfish.avalonaddons.core.config
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.google.gson.JsonPrimitive
-import com.google.gson.JsonSerializer
-import com.google.gson.TypeAdapter
 import com.google.gson.reflect.TypeToken
-import com.google.gson.stream.JsonReader
-import com.google.gson.stream.JsonWriter
 import de.bybackfish.avalonaddons.AvalonAddons
-import de.bybackfish.avalonaddons.core.adapter.FriendTypeAdapter
 import de.bybackfish.avalonaddons.extensions.ensureFile
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.descriptors.PrimitiveKind
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.decodeFromJsonElement
-import kotlinx.serialization.json.internal.writeJson
 import java.io.File
 import java.io.Reader
 import java.io.Writer
@@ -39,26 +28,31 @@ abstract class PersistentSave<T : Any>(protected val name: String, val default: 
     }
 
     fun dirty() {
-        PersistentSave.markDirty(this::class)
+        markDirty(this::class)
     }
 
-    private fun load() {
+    fun load() {
         if(!file.exists()) {
             println("Does not exist")
             file.ensureFile()
-            writeFile(true)
+            kotlin.runCatching {
+                onCreate()
+                writeFile(true)
+            }.onFailure {
+                it.printStackTrace()
+            }
             return
         }
 
         file.bufferedReader().use {
-            read(it)
+            read(AvalonAddons.json, it)
         }
     }
     private fun writeFile(force: Boolean = false) {
         if(!dirty && !force) return
 
         file.writer().use {
-            write(it)
+            write(AvalonAddons.json, it)
         }
     }
 
@@ -68,6 +62,8 @@ abstract class PersistentSave<T : Any>(protected val name: String, val default: 
 
     private fun init() {
         SAVES.add(this)
+
+        if(NO_PARSE.contains(this::class)) return
         load()
     }
 
@@ -75,16 +71,24 @@ abstract class PersistentSave<T : Any>(protected val name: String, val default: 
         init()
     }
 
-    abstract fun read(data: Reader)
-    abstract fun write(writer: Writer)
+    abstract fun read(json: Json, data: Reader)
+    abstract fun write(json: Json, writer: Writer)
+    open fun onCreate() {}
 
 
     companion object {
         val SAVES = mutableListOf<PersistentSave<*>>()
+        val NO_PARSE = arrayListOf<KClass<*>>()
+
+
+        fun addNoParse(clazz: KClass<*>) {
+            NO_PARSE.add(clazz)
+        }
 
         fun loadData() {
             SAVES.forEach { it.load() }
         }
+
         fun markDirty(clazz: KClass<out PersistentSave<*>>) {
             val save =
                 SAVES.find { it::class == clazz } ?: throw IllegalAccessException("PersistentSave not found")
@@ -94,16 +98,17 @@ abstract class PersistentSave<T : Any>(protected val name: String, val default: 
         inline fun <reified T : PersistentSave<*>> markDirty() {
             markDirty(T::class)
         }
+
+        private fun saveAll() {
+            SAVES.filter(PersistentSave<*>::dirty).forEach(PersistentSave<*>::writeFile)
+        }
+
         init {
             fixedRateTimer("AvalonAddons-PersistentSave-Write", period = 30000L) {
-                for (save in SAVES) {
-                    if (save.dirty) save.writeFile()
-                }
+                saveAll()
             }
             Runtime.getRuntime().addShutdownHook(Thread({
-                for (save in SAVES) {
-                    if (save.dirty) save.writeFile()
-                }
+                saveAll()
             }, "AvalonAddons-PersistentSave-Shutdown"))
         }
 

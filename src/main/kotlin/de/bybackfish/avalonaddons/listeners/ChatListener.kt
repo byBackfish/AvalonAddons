@@ -6,6 +6,7 @@ import de.bybackfish.avalonaddons.events.BossDefeatedEvent
 import de.bybackfish.avalonaddons.events.ClientChatEvent
 import de.bybackfish.avalonaddons.events.TeleportRequestEvent
 import gg.essential.universal.ChatColor
+import net.minecraft.client.MinecraftClient
 
 class ChatListener {
 
@@ -13,6 +14,11 @@ class ChatListener {
         private val hideMessageRegex = mutableMapOf<Int, Regex>()
         private val hideMessageString = mutableMapOf<Int, String>()
 
+        private val unignoredRegex = Regex("You are not ignoring player (\\w+) anymore.")
+        private val ingoreRegex = Regex("You ignore player (\\w+) from now on.")
+        private val joinRegex = Regex("(.+) joined the game")
+
+        val ignoredPeople = listOf<String>()
 
         fun hide(message: String) {
             val randomId = (0..100000).random()
@@ -50,10 +56,39 @@ class ChatListener {
         checkBossDefeated(event)
         checkTeleportRequestIncoming(event)
 
+        val strippedMessage = ChatColor.stripColorCodes(event.message) ?: return
+        if(unignoredRegex.matches(strippedMessage)) {
+            val user = unignoredRegex.find(event.message)?.groups?.get(1)?.value ?: return
+            if(ignoredPeople.contains(user)) {
+                event.isCancelled = true
+                MinecraftClient.getInstance().player!!.networkHandler.sendCommand("ignore $user")
+                return
+            }
+        }
+
+        if(ingoreRegex.matches(strippedMessage)) {
+            val user = ingoreRegex.find(event.message)?.groups?.get(1)?.value ?: return
+            if(ignoredPeople.contains(user)) {
+                event.isCancelled = true
+                return
+            }
+        }
+
+        if(joinRegex.matches(strippedMessage)) {
+            val user = joinRegex.find(event.message)?.groups?.get(1)?.value ?: return
+            println("user joined: $user")
+            val myUsername = MinecraftClient.getInstance().session!!.username
+
+            if(!user.contentEquals(myUsername, true)) return
+            for(person in ignoredPeople) {
+                MinecraftClient.getInstance().player!!.networkHandler.sendCommand("ignore $person")
+            }
+        }
+
         if (checkMessage(event.message)) event.isCancelled = true
     }
 
-    fun checkBossDefeated(event: ClientChatEvent.Received) {
+    private fun checkBossDefeated(event: ClientChatEvent.Received) {
         var bossData = Bosses.parseFromMessage(event.message)
         if (bossData != null) {
             BossDefeatedEvent(bossData.boss.lootable, bossData.player).call()
@@ -65,9 +100,9 @@ class ChatListener {
         val tpaRegex = Regex("(.+) has requested to teleport to you.+?")
 
         val match = tpaRegex.find(message) ?: return
-        val playerName = match.groupValues[1]
+        val playerName = match.groups[1] ?: return
         // the player might have a rank, so the name is the last split of the name
-        val actualName = playerName.split(" ").last()
+        val actualName = playerName.value.split(" ").last()
         TeleportRequestEvent.Incoming(actualName).call()
     }
 

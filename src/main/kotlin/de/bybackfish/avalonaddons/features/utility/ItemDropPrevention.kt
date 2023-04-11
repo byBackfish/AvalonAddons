@@ -50,11 +50,11 @@ class ItemDropPrevention : Feature() {
         checkEventForSlot(event.slot, event)
     }
 
-    fun checkEventForSlot(slot: Int, event: Event) {
+    private fun checkEventForSlot(slot: Int, event: Event) {
         if (!LockedSlotsConfig.isLocked(slot)) return
 
         UChat.chat(AvalonAddons.PREFIX + "§cPrevented you from dropping this item. Please unlock it first.")
-        mc.player!!.playSound(SoundEvents.BLOCK_NOTE_BLOCK_BASS, 0.5f, 0.5f)
+        mc.player!!.playSound(SoundEvents.BLOCK_NOTE_BLOCK_BASS.value(), 0.5f, 0.5f)
         event.isCancelled = true
     }
 

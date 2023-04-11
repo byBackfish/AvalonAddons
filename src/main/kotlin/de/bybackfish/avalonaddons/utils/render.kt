@@ -1,6 +1,7 @@
 package de.bybackfish.avalonaddons.utils
 
 import com.mojang.blaze3d.systems.RenderSystem
+import net.fabricmc.loader.impl.lib.sat4j.core.Vec
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.render.*
 import net.minecraft.client.render.block.entity.BeaconBlockEntityRenderer
@@ -10,18 +11,31 @@ import net.minecraft.text.Text
 import net.minecraft.util.DyeColor
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
-import net.minecraft.util.math.Matrix4f
-import net.minecraft.util.math.Vec3f
+import net.minecraft.util.math.RotationAxis
+import org.joml.Vector3f
 import java.awt.Color
 import java.lang.Integer.max
 import java.lang.Integer.min
 
 
+
+fun drawText(matrices: MatrixStack, text: String, x: Int, y: Int, scale: Double = 1.0, color: Int = 0xFFFFFF, shadow: Boolean = false) {
+    matrices.push()
+    matrices.translate(x.toDouble(), y.toDouble(), 0.0)
+    matrices.scale(scale.toFloat(), scale.toFloat(), scale.toFloat())
+    if (shadow) {
+        MinecraftClient.getInstance().textRenderer.drawWithShadow(matrices, text, 0f, 0f, color)
+    } else {
+        MinecraftClient.getInstance().textRenderer.draw(matrices, text, 0f, 0f, color)
+    }
+    matrices.pop()
+}
+
 fun drawLine(matrices: MatrixStack, x1: Int, y1: Int, x2: Int, y2: Int, color: Int = -1) {
     RenderSystem.enableBlend()
     RenderSystem.disableTexture()
     RenderSystem.defaultBlendFunc()
-    RenderSystem.setShader(GameRenderer::getPositionColorShader)
+    RenderSystem.setShader(GameRenderer::getPositionTexColorProgram)
     val bufferBuilder = Tessellator.getInstance().buffer
     bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR)
     val matrix = matrices.peek().positionMatrix
@@ -89,8 +103,9 @@ fun drawTextInWorld(
     val vertex = mc.bufferBuilders.outlineVertexConsumers
 
     matrix.push()
-    matrix.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(-camera.yaw))
-    matrix.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(camera.pitch))
+
+    matrix.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(-camera.yaw))
+    matrix.multiply(RotationAxis.POSITIVE_X.rotationDegrees(camera.pitch))
     matrix.translate(offX, offY, 0.0)
     matrix.scale(-0.025f * scale.toFloat(), -0.025f * scale.toFloat(), 1f)
 
@@ -144,8 +159,8 @@ fun drawTextInWorld(
 
 fun Camera.matrixFrom(x: Double, y: Double, z: Double): MatrixStack {
     val matrix = MatrixStack()
-    matrix.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(pitch))
-    matrix.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(yaw + 180.0f))
+    matrix.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(pitch))
+    matrix.multiply(RotationAxis.POSITIVE_X.rotationDegrees(yaw + 180.0f))
     matrix.translate(x - pos.x, y - pos.y, z - pos.z)
     return matrix
 }
@@ -243,8 +258,8 @@ fun drawTexturedRect(
 ) {
     val uScale = 1f / textureWidth
     val vScale = 1f / textureHeight
-    val matrix: Matrix4f = matrices.peek().positionMatrix
-    RenderSystem.setShader { GameRenderer.getPositionTexShader() }
+    val matrix = matrices.peek().positionMatrix
+    RenderSystem.setShader { GameRenderer.getPositionTexProgram() }
     RenderSystem.setShaderTexture(0, tex)
     val bufferBuilder: BufferBuilder = Tessellator.getInstance().buffer
     bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE)
@@ -265,5 +280,5 @@ fun drawTexturedRect(
         .texture(uOffset * uScale, vOffset * vScale)
         .next()
 
-    BufferRenderer.drawWithShader(bufferBuilder.end())
+    BufferRenderer.drawWithGlobalProgram(bufferBuilder.end())
 }

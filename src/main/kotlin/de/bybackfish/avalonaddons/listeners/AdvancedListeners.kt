@@ -27,5 +27,4 @@ class AdvancedListeners {
         if (lootable != null)
             LootableChestEvent(lootable, event.container).call()
     }
-
 }

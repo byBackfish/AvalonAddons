@@ -11,12 +11,14 @@ import de.bybackfish.avalonaddons.core.getKey
 import de.bybackfish.avalonaddons.core.translations
 import de.bybackfish.avalonaddons.events.*
 import de.bybackfish.avalonaddons.extensions.camel
+import de.bybackfish.avalonaddons.utils.drawText
 import de.bybackfish.avalonaddons.utils.formatRelativeFutureTime
 import gg.essential.elementa.ElementaVersion
 import gg.essential.elementa.components.UIText
 import gg.essential.elementa.components.Window
 import gg.essential.elementa.constraints.*
 import gg.essential.elementa.dsl.*
+import gg.essential.elementa.state.BasicState
 import gg.essential.universal.UChat
 import gg.essential.universal.UMatrixStack
 import gg.essential.vigilance.data.PropertyType
@@ -36,9 +38,27 @@ class BetterBossTimer : Feature() {
     )
     var renderBossTimersOnScreen = false
 
+    @Property(
+        description = "Height of the Boss Timer Text",
+        min = 4,
+        max = 20,
+        sortingOrder = 2,
+        forceType = PropertyType.SLIDER
+    )
+    var bossTimerHeight = 8
+
+    @Property(
+        description = "Text Scale of the Boss Timer Text (%)",
+        min = 100,
+        max = 500,
+        sortingOrder = 3,
+        forceType = PropertyType.SLIDER
+    )
+    var bossTimerScalePercent = 100
+
     @Button(
         description = "Should all Boss Timer Renderers be enabled",
-        sortingOrder = 2,
+        sortingOrder = 4,
         buttonText = "Enable All"
     )
     fun enableAll() {
@@ -50,7 +70,7 @@ class BetterBossTimer : Feature() {
 
     @Button(
         description = "Should all Boss Timer Renderers be disabled",
-        sortingOrder = 3,
+        sortingOrder = 5,
         buttonText = "Disable All"
     )
     fun disableAll() {
@@ -62,7 +82,7 @@ class BetterBossTimer : Feature() {
 
     @Button(
         description = "Reset All Boss Timers (Cooldowns)",
-        sortingOrder = 4,
+        sortingOrder = 6,
         buttonText = "Reset All"
     )
     fun resetAll() {
@@ -76,7 +96,7 @@ class BetterBossTimer : Feature() {
     init {
         val total = Lootable.values().size
        Lootable.values().forEachIndexed { index, it ->
-           val sortingOrder = index + 5
+           val sortingOrder = index + 7
 
            val translatedName = getKey(this::class) + "." + it.name.camel()
            translations["${translatedName}-render"] = "Render ${it.name.camel()}'s Timer"
@@ -119,17 +139,6 @@ class BetterBossTimer : Feature() {
        }
     }
 
-    override fun postInit() {
-        for (it in Lootable.values()) {
-            val text = UIText(it.displayName).constrain {
-                x = 20.pixels()
-                y = 0.pixels()
-            } childOf window
-            bossTimers[it] = text
-        }
-    }
-
-
     @Subscribe
     fun onLootableGUI(event: LootableChestEvent) {
         if (event.lootable.isOnCooldown(this)) return
@@ -142,10 +151,8 @@ class BetterBossTimer : Feature() {
     @Subscribe
     fun onRender(event: RenderScreenEvent) {
         if (!renderBossTimersOnScreen) return
-        var totalHeight: Float = 0f
-
-        var i = 0f
-        bossTimers.entries.forEachIndexed { index, (boss, text) ->
+        var i = 0;
+        Lootable.values().forEachIndexed { index, boss ->
             val shouldRender = property<Boolean>("${boss.name.camel()}-render") ?: false
             if (!shouldRender) return@forEachIndexed
 
@@ -164,9 +171,9 @@ class BetterBossTimer : Feature() {
             }
             val content = "§l${boss.displayName}§r§7: §l$status"
 
-            text.setText(content)
-            text.setY((20 + i * 10f).pixels())
-            text.draw(UMatrixStack(event.stack))
+            val x = 20;
+            val y = 20 + i * (bossTimerHeight * 1.25);
+            drawText(event.stack, content, x, y.toInt(), bossTimerScalePercent / 100.0, shadow = true)
             i++
         }
     }
