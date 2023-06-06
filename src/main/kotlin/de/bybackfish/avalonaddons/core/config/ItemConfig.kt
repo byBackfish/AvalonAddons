@@ -6,7 +6,6 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import net.minecraft.block.BarrierBlock
 import net.minecraft.client.MinecraftClient
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
@@ -42,7 +41,8 @@ object ItemConfig : PersistentSave
 
     fun loadFromAPI() {
         this.data.clear()
-        val url = URL("http://185.2.102.91:5142/get/${MinecraftClient.getInstance().session.uuid}")
+        val url =
+            URL("http://185.2.102.91:5142/get/${MinecraftClient.getInstance().session.uuid}?key=${AvalonAddons.config.betaKey}")
         val items = AvalonAddons.json.decodeFromString<List<Item>>(url.readText())
         this.data.putAll(items.associateBy { it.id })
 

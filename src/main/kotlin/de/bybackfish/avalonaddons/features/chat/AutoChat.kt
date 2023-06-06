@@ -3,7 +3,6 @@ package de.bybackfish.avalonaddons.features.chat
 import de.bybackfish.avalonaddons.core.annotations.Category
 import de.bybackfish.avalonaddons.core.annotations.EnabledByDefault
 import de.bybackfish.avalonaddons.core.annotations.Property
-import de.bybackfish.avalonaddons.core.config.PersistentSave
 import de.bybackfish.avalonaddons.core.event.Subscribe
 import de.bybackfish.avalonaddons.core.feature.Feature
 import de.bybackfish.avalonaddons.events.BossDefeatedEvent
@@ -12,9 +11,7 @@ import de.bybackfish.avalonaddons.extensions.camel
 import gg.essential.universal.ChatColor
 import gg.essential.universal.UChat
 import gg.essential.vigilance.data.PropertyType
-import kotlinx.coroutines.delay
-import java.time.Duration
-import java.util.Timer
+import java.util.*
 import kotlin.concurrent.schedule
 
 @EnabledByDefault
@@ -71,13 +68,10 @@ class AutoChat : Feature() {
         if (automaticallySayWelcomeBack) {
             val joinRegex = Regex("(.+) joined the game")
             val match = joinRegex.find(message) ?: return
-            val playerName = match.groups.get(1) ?: return
+            val playerName = match.groups[1] ?: return
 
-            if (playerName.value == mc.player?.name?.string) return
+            if (playerName.value == mc.session.username) return
 
-
-            // run something async and wait 5 seconds
-            // use ExecutingThread to run something on the main thread
             Timer().schedule((Math.random() * 3000 + 500).toLong()) {
                 UChat.say(customWelcomeBackMessage.replace("%s", playerName.value))
             }

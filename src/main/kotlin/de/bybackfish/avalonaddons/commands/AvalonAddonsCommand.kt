@@ -2,12 +2,12 @@ package de.bybackfish.avalonaddons.commands
 
 import com.mojang.brigadier.arguments.StringArgumentType
 import de.bybackfish.avalonaddons.AvalonAddons
-import de.bybackfish.avalonaddons.avalon.Lootable
 import de.bybackfish.avalonaddons.core.config.FriendStatus
 import de.bybackfish.avalonaddons.core.config.FriendsConfig
 import de.bybackfish.avalonaddons.core.config.ItemConfig
+import de.bybackfish.avalonaddons.core.feature.struct.FeatureState
 import de.bybackfish.avalonaddons.events.ClientChatEvent
-import de.bybackfish.avalonaddons.features.bosses.BetterBossTimer
+import de.bybackfish.avalonaddons.features.dev.NPCExploit
 import de.bybackfish.avalonaddons.features.ui.ItemViewer
 import gg.essential.universal.UChat
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument
@@ -28,7 +28,12 @@ class AvalonAddonsCommand {
                         UChat.chat(AvalonAddons.PREFIX + "§7Reloading cache...")
                         Thread {
                             ItemConfig.loadFromAPI()
+                            val state = AvalonAddons.featureManager.getFeature<ItemViewer>()?.state
+                            // disable
+                            AvalonAddons.featureManager.getFeature<ItemViewer>()?.state =
+                                FeatureState.DISABLED
                             AvalonAddons.featureManager.getFeature<ItemViewer>()?.postInit()
+                            AvalonAddons.featureManager.getFeature<ItemViewer>()?.state = state!!
                             UChat.chat(AvalonAddons.PREFIX + "§aSuccessfully reloaded the cache!")
                         }.start()
                         1
@@ -44,7 +49,7 @@ class AvalonAddonsCommand {
                                 1
                             })
                     ).then(literal("test").executes { ctx ->
-
+                        AvalonAddons.featureManager.getFeature<NPCExploit>()?.doFunStuff()
                         1
                     })
 

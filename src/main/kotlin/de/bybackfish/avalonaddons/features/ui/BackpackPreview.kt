@@ -89,7 +89,6 @@ class BackpackPreview : Feature() {
 
     @Subscribe
     fun tryRenderBackpack(event: RenderTooltipEvent) {
-        println("TRY RENDER BACKPACK")
         val matrices = event.matrices
         val mouseX = event.mouseX
         val mouseY = event.mouseY

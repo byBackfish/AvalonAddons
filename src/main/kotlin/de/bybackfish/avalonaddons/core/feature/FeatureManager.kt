@@ -95,7 +95,7 @@ class FeatureManager {
                 val mcKeybind = KeyBinding(
                     getTranslatedName(getKey(feature::class, it)),
                     annotation.defaultKey,
-                    "AvalonAddons"
+                    "AvalonAddons - ${getTranslatedName(getKey(feature::class))}"
                 )
                 KeyBindingHelper.registerKeyBinding(mcKeybind)
 
@@ -369,8 +369,8 @@ class FeatureManager {
                 else -> {
                     PropertyType.TEXT
                 }
-            }
 
+            }
         }
     }
 
@@ -423,7 +423,6 @@ class FeatureManager {
         }
 
         override fun setValue(value: Any?, instance: Vigilant) {
-            println("[Avalon] FeatureTogglePropertyValue: ${feature.state} -> Value: $value")
             if (value as Boolean) {
                 if (feature.state == FeatureState.ENABLED) return
                 feature.toggle()
@@ -433,6 +432,5 @@ class FeatureManager {
             }
         }
     }
-
 }
 

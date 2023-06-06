@@ -1,15 +1,23 @@
 package de.bybackfish.avalonaddons.mixins;
 
+import static com.mojang.blaze3d.systems.RenderSystem.depthMask;
+
+import com.mojang.blaze3d.systems.RenderSystem;
+import de.bybackfish.avalonaddons.AvalonAddons;
 import de.bybackfish.avalonaddons.events.DrawSlotEvent;
 import de.bybackfish.avalonaddons.events.GUIKeyPressEvent;
 import de.bybackfish.avalonaddons.events.ItemActionEvent;
-import de.bybackfish.avalonaddons.events.RenderTooltipEvent;
 import de.bybackfish.avalonaddons.events.gui.ClickGuiEvent;
 import de.bybackfish.avalonaddons.events.gui.CloseGuiEvent;
 import de.bybackfish.avalonaddons.events.gui.InitGuiEvent;
 import de.bybackfish.avalonaddons.events.gui.RenderGuiEvent;
+import de.bybackfish.avalonaddons.features.ui.ItemViewer;
+import java.awt.Color;
 import java.util.Objects;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
@@ -44,17 +52,6 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
 
   protected HandledScreenMixin(Text title) {
     super(title);
-  }
-
-  @Inject(at = @At("HEAD"), method = "drawMouseoverTooltip", cancellable = true)
-  public void drawMouseOverTooltip(MatrixStack matrices, int x, int y, CallbackInfo ci) {
-    if (this.focusedSlot == null || this.focusedSlot.getStack().isEmpty()) {
-      return;
-    }
-    if (new RenderTooltipEvent(matrices, this.focusedSlot, this.focusedSlot.getStack(), x,
-        y).call()) {
-      ci.cancel();
-    }
   }
 
   @Inject(
@@ -98,8 +95,7 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
 
 
   @Inject(at = @At("TAIL"), method = "drawSlot", cancellable = true)
-  public void drawSlot(MatrixStack matrices, Slot slot, CallbackInfo ci) {
-
+  public void drawSlotTail(MatrixStack matrices, Slot slot, CallbackInfo ci) {
     if (slot.inventory instanceof PlayerInventory) {
       if (new DrawSlotEvent(matrices, slot, slot.getStack(), slot.x, slot.y).call()) {
         ci.cancel();
@@ -137,6 +133,21 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
     }
   }
 
+  @Inject(method = "drawSlot", at = @At("HEAD"))
+  public void drawSlot(MatrixStack matrices, Slot slot, CallbackInfo ci) {
+    if (MinecraftClient.getInstance().currentScreen == null) {
+      return;
+    }
+    if (slot.getStack() == null && ItemViewer.Companion.getSearchMode()) {
+      matrices.push();
+      matrices.translate(0, 0, 100 + Objects.requireNonNull(this.client).getItemRenderer().zOffset);
+      depthMask(false);
+      DrawableHelper.fill(matrices, slot.x, slot.y, slot.x + 16, slot.y + 16, AvalonAddons.config.getItemSearchHighlightColorDark().getRGB());
+      depthMask(true);
+      matrices.pop();
+    }
+
+  }
 
 
 }

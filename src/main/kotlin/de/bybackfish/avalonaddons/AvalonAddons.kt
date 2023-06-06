@@ -2,10 +2,7 @@ package de.bybackfish.avalonaddons
 
 import de.bybackfish.avalonaddons.commands.AvalonAddonsCommand
 import de.bybackfish.avalonaddons.commands.LootTrackCommand
-import de.bybackfish.avalonaddons.core.config.FriendsConfig
-import de.bybackfish.avalonaddons.core.config.ItemConfig
-import de.bybackfish.avalonaddons.core.config.LockedSlotsConfig
-import de.bybackfish.avalonaddons.core.config.PersistentSave
+import de.bybackfish.avalonaddons.core.config.*
 import de.bybackfish.avalonaddons.core.event.EventBus
 import de.bybackfish.avalonaddons.core.feature.FeatureManager
 import de.bybackfish.avalonaddons.core.loadTranslations
@@ -14,27 +11,26 @@ import de.bybackfish.avalonaddons.features.bosses.BossLootTracker
 import de.bybackfish.avalonaddons.features.chat.AutoAcceptTeleportRequest
 import de.bybackfish.avalonaddons.features.chat.AutoChat
 import de.bybackfish.avalonaddons.features.chat.AutoTeleportToDeadBoss
+import de.bybackfish.avalonaddons.features.dev.NPCExploit
 import de.bybackfish.avalonaddons.features.friends.FriendsFeature
 import de.bybackfish.avalonaddons.features.friends.IgnoredFeature
-import de.bybackfish.avalonaddons.features.quests.QuestDisplay
-import de.bybackfish.avalonaddons.features.quests.QuestOverlay
 import de.bybackfish.avalonaddons.features.render.RarityBackgroundFeature
 import de.bybackfish.avalonaddons.features.ui.BackpackPreview
 import de.bybackfish.avalonaddons.features.ui.GearViewer
 import de.bybackfish.avalonaddons.features.ui.ItemViewer
+import de.bybackfish.avalonaddons.features.utility.AdvancedItemInfo
 import de.bybackfish.avalonaddons.features.utility.ArmorQuickSwap
 import de.bybackfish.avalonaddons.features.utility.ItemDropPrevention
+import de.bybackfish.avalonaddons.features.utility.QuickSkills
 import de.bybackfish.avalonaddons.listeners.AdvancedListeners
 import de.bybackfish.avalonaddons.listeners.ChatListener
 import de.bybackfish.avalonaddons.listeners.NativeListeners
-import de.bybackfish.avalonaddons.utils.drawText
 import gg.essential.universal.UScreen
 import gg.essential.vigilance.data.JVMAnnotationPropertyCollector
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
-import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.screen.Screen
 
@@ -85,16 +81,15 @@ class AvalonAddons : ModInitializer {
 
         loadTranslations()
 
-        tryInitializeItems()
 
         featureManager.register(
             BetterBossTimer(),
 
             AutoChat(),
-            QuestOverlay(),
+            //   QuestOverlay(),
             RarityBackgroundFeature(),
             GearViewer(),
-            QuestDisplay(),
+            //    QuestDisplay(),
 
             AutoTeleportToDeadBoss(),
             AutoAcceptTeleportRequest(),
@@ -106,15 +101,24 @@ class AvalonAddons : ModInitializer {
             ItemDropPrevention(),
             BossLootTracker(),
 
-            ItemViewer()
+            ItemViewer(),
+            QuickSkills(),
+
+            AdvancedItemInfo()
         )
+
+        featureManager.register(NPCExploit())
+
         featureManager.loadToConfig()
 
         config.initialize()
         config.markDirty()
 
+        tryInitializeItems()
+
         FriendsConfig
         LockedSlotsConfig
+        BossKillConfig
 
 
         AvalonAddonsCommand()

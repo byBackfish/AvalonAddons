@@ -13,8 +13,11 @@ import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
-import net.minecraft.text.*
+import net.minecraft.text.HoverEvent
 import net.minecraft.text.HoverEvent.ItemStackContent
+import net.minecraft.text.MutableText
+import net.minecraft.text.Style
+import net.minecraft.text.Text
 import net.minecraft.util.hit.EntityHitResult
 
 @Category("UI")
@@ -24,7 +27,10 @@ class GearViewer : Feature() {
     @Property(forceType = PropertyType.SELECTOR, options = ["GUI", "Chat"])
     var displayMode = 0
 
-    @Property(forceType = PropertyType.SWITCH, description = "Should it also work on Non-Players?")
+    @Property(
+        forceType = PropertyType.SWITCH,
+        description = "Should it also work on non-player entities"
+    )
     var nonPlayer = false
 
     @Keybind(0)

@@ -120,7 +120,9 @@ class GearViewerScreen(val entity: LivingEntity) : Screen(Text.of("Yes Screen"))
         return super.mouseClicked(mouseX, mouseY, button)
     }
 
-    fun dummyItem(name: String): ItemStack {
+
+
+    private fun dummyItem(name: String): ItemStack {
         return ItemStack(Items.BARRIER).setCustomName(Text.of("No $name :("))
     }
 

@@ -1,7 +1,6 @@
 package de.bybackfish.avalonaddons.utils
 
 import com.mojang.blaze3d.systems.RenderSystem
-import net.fabricmc.loader.impl.lib.sat4j.core.Vec
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.render.*
 import net.minecraft.client.render.block.entity.BeaconBlockEntityRenderer
@@ -12,11 +11,9 @@ import net.minecraft.util.DyeColor
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.RotationAxis
-import org.joml.Vector3f
 import java.awt.Color
 import java.lang.Integer.max
 import java.lang.Integer.min
-
 
 
 fun drawText(matrices: MatrixStack, text: String, x: Int, y: Int, scale: Double = 1.0, color: Int = 0xFFFFFF, shadow: Boolean = false) {

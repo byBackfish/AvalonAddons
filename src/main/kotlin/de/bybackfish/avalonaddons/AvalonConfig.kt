@@ -6,6 +6,7 @@ import gg.essential.vigilance.Vigilant
 import gg.essential.vigilance.data.*
 import net.minecraft.client.MinecraftClient
 import net.minecraft.util.Rarity
+import java.awt.Color
 import java.awt.Desktop
 import java.io.File
 
@@ -67,6 +68,51 @@ class AvalonConfig : Vigilant(
             UChat.chat("§a§lInvite Link§r§7: §r$link")
         }
     }
+
+    @Property(
+        type = PropertyType.COLOR,
+        name = "Item Search Hightlight Color (Light)",
+        description = "What color should items that meet the search be highlighted with?",
+        category = "General",
+        subcategory = "Misc - Item Search",
+    )
+    var itemSearchHighlightColorLight = Color(255, 255, 255, 120)
+
+    @Property(
+        type = PropertyType.COLOR,
+        name = "Item Search Hightlight Color (Dark)",
+        description = "What color should items that §cdo not §7meet the search be highlighted with?",
+        category = "General",
+        subcategory = "Misc - Item Search",
+    )
+    var itemSearchHighlightColorDark = Color(0, 0, 0, 120)
+
+    @Property(
+        type = PropertyType.CHECKBOX,
+        name = "Test Box 1",
+        description = "Test Box 1",
+        category = "General",
+        subcategory = "Misc - Test Box",
+    )
+    var testBox1 = false
+
+    @Property(
+        type = PropertyType.CHECKBOX,
+        name = "Test Box 2",
+        description = "Test Box 2",
+        category = "General",
+        subcategory = "Misc - Test Box",
+    )
+    var testBox2 = false
+
+    @Property(
+        type = PropertyType.CHECKBOX,
+        name = "Test Box 3",
+        description = "Test Box 3",
+        category = "General",
+        subcategory = "Misc - Test Box",
+    )
+    var testBox3 = false
 
 
     companion object {
